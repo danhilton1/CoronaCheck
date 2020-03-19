@@ -12,9 +12,16 @@ import UIKit
 struct NetworkingServices {
     
     
-    static func downloadData(for country: String?, completion: @escaping (CoronaStatistic) -> ()) {
+    static func downloadData(forCountryCode code: String?, completion: @escaping (CoronaStatistic) -> ()) {
 
-        let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/all")!
+        var url: URL
+        if let country = code {
+            url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=\(country)")!
+        }
+        else {
+            url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/latest")!
+        }
+        
         let request = NSMutableURLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10.0)
         request.httpMethod = "GET"
 
@@ -27,11 +34,35 @@ struct NetworkingServices {
                 guard let data = data else { return }
                 
                 do {
-                    let covidData = try JSONDecoder().decode(CoronaData.self, from: data)
                     
-                    let stat = CoronaStatistic(province: nil, country: nil, lastUpdate: covidData.confirmed.last_updated, confirmed: covidData.latest.confirmed, deaths: covidData.latest.deaths, recovered: covidData.latest.recovered)
-
-                    completion(stat)
+                    
+                    var statistic: CoronaStatistic!
+                    
+                    if code != nil {
+                        
+                        let covidData = try JSONDecoder().decode(CoronaCountryData.self, from: data)
+                        
+                        var totalConfirmed = 0
+                        var totalDeaths = 0
+                        var totalRecovered = 0
+                        
+                        let locations = covidData.locations
+                        for location in locations {
+                            totalConfirmed += location.latest.confirmed
+                            totalDeaths += location.latest.deaths
+                            totalRecovered += location.latest.recovered
+                        }
+                        statistic = CoronaStatistic(province: nil, country: locations.first?.country, confirmed: totalConfirmed, deaths: totalDeaths, recovered: totalRecovered)
+                        
+                    }
+                    else {
+                        let covidData = try JSONDecoder().decode(CoronaAllData.self, from: data)
+                        
+                        statistic = CoronaStatistic(province: nil, country: nil, confirmed: covidData.latest.confirmed, deaths: covidData.latest.deaths, recovered: covidData.latest.recovered)
+                        
+                    }
+                    completion(statistic)
+                    
                 }
                 catch {
                     print(error)

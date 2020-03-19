@@ -9,11 +9,12 @@
 import Foundation
 
 
-struct CoronaData: Codable {
+struct CoronaAllData: Codable {
     let latest: Latest
-    let confirmed: Confirmed
-    let deaths: Deaths
-    let recovered: Recovered
+}
+
+struct CoronaCountryData: Codable {
+    let locations: [Location]
 }
 
 struct Latest: Codable {
@@ -22,26 +23,28 @@ struct Latest: Codable {
     let recovered: Int
 }
 
-struct Confirmed: Codable {
-    let last_updated: String
-    let latest: Int
-    let locations: [Location]
-}
-
-struct Deaths: Codable {
-    let last_updated: String
-    let latest: Int
-    let locations: [Location]
-}
-
-struct Recovered: Codable {
-    let last_updated: String
-    let latest: Int
-    let locations: [Location]
-}
-
 struct Location: Codable {
-    let latest: Int
+    let latest: Latest
     let country: String
     
 }
+
+//struct Confirmed: Codable {
+//    let last_updated: String
+//    let latest: Int
+//    let locations: [Location]
+//}
+//
+//struct Deaths: Codable {
+//    let last_updated: String
+//    let latest: Int
+//    let locations: [Location]
+//}
+//
+//struct Recovered: Codable {
+//    let last_updated: String
+//    let latest: Int
+//    let locations: [Location]
+//}
+
+

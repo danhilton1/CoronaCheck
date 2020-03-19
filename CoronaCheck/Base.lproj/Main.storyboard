@@ -56,8 +56,8 @@
                                 <color key="textColor" red="0.93907914057868014" green="0.26746822138440129" blue="0.29120439100825352" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Worldwide Overview" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NRO-QO-Wzk">
-                                <rect key="frame" x="55.5" y="199" width="303" height="41"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Worldwide" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NRO-QO-Wzk">
+                                <rect key="frame" x="129" y="199" width="156" height="41"/>
                                 <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="30"/>
                                 <color key="textColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
@@ -122,7 +122,7 @@
                                     <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <connections>
-                                    <segue destination="fje-Iw-E8M" kind="presentation" id="BZV-QJ-Gjh"/>
+                                    <segue destination="fje-Iw-E8M" kind="presentation" identifier="GoToCountries" id="BZV-QJ-Gjh"/>
                                 </connections>
                             </button>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="EarthImage" translatesAutoresizingMaskIntoConstraints="NO" id="ps5-yR-ZWh">
@@ -223,7 +223,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>
                         </subviews>
-                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.274620533" green="0.27422633769999999" blue="0.29019856449999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="ekX-H6-qyi" firstAttribute="top" secondItem="MV4-fP-LCG" secondAttribute="top" constant="20" id="Aeq-FK-ehd"/>
                             <constraint firstItem="MV4-fP-LCG" firstAttribute="trailing" secondItem="iue-K5-Jl0" secondAttribute="trailing" id="Cpx-Zg-qMQ"/>

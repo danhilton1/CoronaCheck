@@ -10,12 +10,12 @@ import Foundation
 
 struct CoronaStatistic {
     
-    let province: String?
-    let country: String?
-    let lastUpdate: String
-    let confirmed: Int
-    let deaths: Int
-    let recovered: Int
+    var province: String?
+    var country: String?
+//    var lastUpdate: String
+    var confirmed: Int
+    var deaths: Int
+    var recovered: Int
     
     
 }

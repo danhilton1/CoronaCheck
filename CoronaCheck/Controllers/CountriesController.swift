@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import FlagKit
 
 class CountriesController: UIViewController {
     
@@ -15,14 +15,19 @@ class CountriesController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var searchBar: UISearchBar!
     
+    var delegate: CountryDelegate?
+    
+    var countries: [Country]?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         collectionView.register(UINib(nibName: "CountryCell", bundle: nil), forCellWithReuseIdentifier: "Cell")
         collectionView.delegate = self
         collectionView.dataSource = self
         
-        collectionView.backgroundColor = .secondaryLabel
+        collectionView.backgroundColor = .darkGray
+        view.backgroundColor = .darkGray
 
         
     }
@@ -45,9 +50,11 @@ extension CountriesController: UICollectionViewDataSource, UICollectionViewDeleg
         var countries: [String] = []
 
         for code in NSLocale.isoCountryCodes  {
-            let id = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
-            let name = NSLocale(localeIdentifier: "en_UK").displayName(forKey: NSLocale.Key.identifier, value: id) ?? "Country not found for code: \(code)"
-            countries.append(name)
+            if Flag(countryCode: code) != nil {
+                let id = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
+                let name = NSLocale(localeIdentifier: "en_UK").displayName(forKey: NSLocale.Key.identifier, value: id) ?? "Country not found for code: \(code)"
+                countries.append(name)
+            }
         }
         
         return countries.count
@@ -56,16 +63,23 @@ extension CountriesController: UICollectionViewDataSource, UICollectionViewDeleg
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! CountryCell
     
-
-        var countries: [String] = []
-
+        countries = [Country]()
+        
         for code in NSLocale.isoCountryCodes  {
-            let id = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
-            let name = NSLocale(localeIdentifier: "en_UK").displayName(forKey: NSLocale.Key.identifier, value: id) ?? "Country not found for code: \(code)"
-            countries.append(name)
+            if Flag(countryCode: code) != nil {
+                
+                let id = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
+                let name = NSLocale(localeIdentifier: "en_UK").displayName(forKey: NSLocale.Key.identifier, value: id) ?? "Country not found for code: \(code)"
+                countries?.append(Country(country: name, code: code))
+            }
+        }
+        countries = countries?.sorted { $0.country < $1.country }
+        let flag = Flag(countryCode: (countries?[indexPath.row].code)!)
+        if let confirmedFlag = flag {
+            cell.countryImageView.image = confirmedFlag.image(style: .circle)
+            cell.countryLabel.text = countries?[indexPath.row].country
         }
         
-        cell.countryLabel.text = countries[indexPath.row]
     
         return cell
     }
@@ -76,6 +90,11 @@ extension CountriesController: UICollectionViewDataSource, UICollectionViewDeleg
     
     // MARK: UICollectionViewDelegate
 
-
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let country = countries?[indexPath.row].country, let countryCode = countries?[indexPath.row].code {
+            delegate?.loadDataFromCountry(country: country, countryCode: countryCode)
+        }
+        self.dismiss(animated: true)
+    }
 
 }

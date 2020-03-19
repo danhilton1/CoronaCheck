@@ -8,7 +8,7 @@
 
 import UIKit
 
-class OverviewViewController: UIViewController {
+class OverviewViewController: UIViewController, CountryDelegate {
 
     @IBOutlet weak var locationImageView: UIImageView!
     @IBOutlet weak var overviewTitleLabel: UILabel!
@@ -22,6 +22,7 @@ class OverviewViewController: UIViewController {
     let inputFormatter = DateFormatter()
     let outputFormatter = DateFormatter()
     
+    var countryCode: String?
     var finishedDownloading = false
     
     override func viewDidLoad() {
@@ -46,12 +47,12 @@ class OverviewViewController: UIViewController {
         
         refreshButton.rotate(duration: 1)
         
-        downloadData()
+        downloadData(countryCode: countryCode)
     }
     
-    func downloadData() {
+    func downloadData(countryCode: String?) {
         
-        NetworkingServices.downloadData(for: nil) { (corona) in
+        NetworkingServices.downloadData(forCountryCode: countryCode) { (corona) in
             DispatchQueue.main.async {
                 self.finishedDownloading = true
                 self.refreshButton.layer.removeAllAnimations()
@@ -59,9 +60,20 @@ class OverviewViewController: UIViewController {
                 self.confirmedCasesNumberLabel.text = "\(corona.confirmed)"
                 self.confirmedDeathsNumberLabel.text = "\(corona.deaths)"
                 self.confirmedRecoveriesNumberLabel.text = "\(corona.recovered)"
-                let date = self.inputFormatter.date(from: corona.lastUpdate) ?? Date()
-                self.lastUpdatedLabel.text = self.outputFormatter.string(from: date)
+//                let date = self.inputFormatter.date(from: corona.lastUpdate) ?? Date()
+                self.lastUpdatedLabel.text = self.outputFormatter.string(from: Date())
             }
+        }
+        
+    }
+    
+    func loadDataFromCountry(country: String, countryCode: String) {
+        finishedDownloading = false
+        refreshButton.rotate(duration: 1)
+        animateNumbersInLabels()
+        overviewTitleLabel.text = country
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.downloadData(countryCode: countryCode)
         }
         
     }
@@ -71,7 +83,7 @@ class OverviewViewController: UIViewController {
         refreshButton.rotate(duration: 1)
         finishedDownloading = false
         animateNumbersInLabels()
-        downloadData()
+        downloadData(countryCode: countryCode)
         
     }
     
@@ -85,6 +97,13 @@ class OverviewViewController: UIViewController {
                 }
                 usleep(1000)
             }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "GoToCountries" {
+            let destVC = segue.destination as! CountriesController
+            destVC.delegate = self
         }
     }
     
