@@ -16,6 +16,7 @@ class OverviewViewController: UIViewController {
     @IBOutlet weak var confirmedDeathsNumberLabel: UILabel!
     @IBOutlet weak var confirmedRecoveriesNumberLabel: UILabel!
     @IBOutlet weak var lastUpdatedLabel: UILabel!
+    @IBOutlet weak var refreshButton: UIButton!
     @IBOutlet weak var countriesButton: UIButton!
     
     let inputFormatter = DateFormatter()
@@ -26,23 +27,34 @@ class OverviewViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        animateNumbersInLabels()
         setUpViews()
         
-        animateNumbersInLabels()
+        
         
     }
     
     
     func setUpViews() {
         
+        navigationController?.isNavigationBarHidden = true
+        
         inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
         outputFormatter.dateFormat = "E, d MMM yyyy HH:mm:ss"
         
         countriesButton.layer.cornerRadius = 22
         
+        refreshButton.rotate(duration: 1)
+        
+        downloadData()
+    }
+    
+    func downloadData() {
+        
         NetworkingServices.downloadData(for: nil) { (corona) in
             DispatchQueue.main.async {
                 self.finishedDownloading = true
+                self.refreshButton.layer.removeAllAnimations()
                 
                 self.confirmedCasesNumberLabel.text = "\(corona.confirmed)"
                 self.confirmedDeathsNumberLabel.text = "\(corona.deaths)"
@@ -50,12 +62,16 @@ class OverviewViewController: UIViewController {
                 let date = self.inputFormatter.date(from: corona.lastUpdate) ?? Date()
                 self.lastUpdatedLabel.text = self.outputFormatter.string(from: date)
             }
-            
         }
+        
     }
     
 
     @IBAction func refreshButtonTapped(_ sender: UIButton) {
+        refreshButton.rotate(duration: 1)
+        finishedDownloading = false
+        animateNumbersInLabels()
+        downloadData()
         
     }
     
@@ -73,5 +89,17 @@ class OverviewViewController: UIViewController {
     }
     
 
+}
 
+
+extension UIView {
+    func rotate(duration: CFTimeInterval = 3) {
+        let rotateAnimation = CABasicAnimation(keyPath: "transform.rotation")
+        rotateAnimation.fromValue = 0.0
+        rotateAnimation.toValue = CGFloat(Double.pi * 2)
+        rotateAnimation.isRemovedOnCompletion = false
+        rotateAnimation.duration = duration
+        rotateAnimation.repeatCount = Float.infinity
+        self.layer.add(rotateAnimation, forKey: nil)
+    }
 }
