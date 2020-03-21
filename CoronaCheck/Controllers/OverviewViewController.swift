@@ -25,7 +25,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
     
     var countryCode: String?
     var finishedDownloading = false
-    var countries: [Country]?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,15 +33,23 @@ class OverviewViewController: UIViewController, CountryDelegate {
         animateNumbersInLabels()
         setUpViews()
         
-        
-        
     }
     
     
     func setUpViews() {
         
         navigationController?.isNavigationBarHidden = true
-        
+
+        if traitCollection.userInterfaceStyle == .dark {
+            view.backgroundColor = .systemGray6
+            countriesButton.setTitleColor(.black, for: .normal)
+            refreshButton.imageView?.tintColor = .white
+        }
+        else {
+            view.backgroundColor = .white
+            countriesButton.setTitleColor(.white, for: .normal)
+            refreshButton.imageView?.tintColor = .black
+        }
         inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
         outputFormatter.dateFormat = "E, d MMM yyyy HH:mm:ss"
         
@@ -55,7 +63,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
     func downloadData(countryCode: String?) {
         
         NetworkingServices.downloadData(forCountryCode: countryCode) { (corona) in
-            DispatchQueue.main.async {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                 self.finishedDownloading = true
                 self.refreshButton.layer.removeAllAnimations()
                 
@@ -75,7 +83,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
         refreshButton.rotate(duration: 1)
         animateNumbersInLabels()
         overviewTitleLabel.text = country.name
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.downloadData(countryCode: country.code)
         }
         
@@ -110,6 +118,18 @@ class OverviewViewController: UIViewController, CountryDelegate {
         }
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        if traitCollection.userInterfaceStyle == .dark {
+            view.backgroundColor = .systemGray6
+            countriesButton.setTitleColor(.black, for: .normal)
+            refreshButton.imageView?.tintColor = .white
+        }
+        else {
+            view.backgroundColor = .white
+            countriesButton.setTitleColor(.white, for: .normal)
+            refreshButton.imageView?.tintColor = .black
+        }
+    }
 
 }
 

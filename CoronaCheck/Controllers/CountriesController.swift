@@ -36,10 +36,19 @@ class CountriesController: UIViewController {
         configureCollectionViewDataSource()
         createSnapshot(from: countries!)
         
-        
-        collectionView.backgroundColor = .darkGray
-        view.backgroundColor = .darkGray
+        setUpView()
           
+    }
+    
+    func setUpView() {
+        if traitCollection.userInterfaceStyle == .dark {
+            view.backgroundColor = .systemGray6
+            collectionView.backgroundColor = .systemGray6
+        }
+        else {
+            view.backgroundColor = .white
+            collectionView.backgroundColor = .white
+        }
     }
     
     func populateCountriesArray() {
@@ -59,6 +68,11 @@ class CountriesController: UIViewController {
             }
         }
         countries = countries?.sorted { $0.name < $1.name }
+    }
+    
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        setUpView()
     }
     
 }
