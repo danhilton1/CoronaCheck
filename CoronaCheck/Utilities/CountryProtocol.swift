@@ -9,5 +9,5 @@
 import Foundation
 
 protocol CountryDelegate {
-    func loadDataFromCountry(country: String, countryCode: String)
+    func loadDataFromCountry(country: Country)
 }

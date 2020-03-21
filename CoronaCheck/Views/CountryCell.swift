@@ -18,6 +18,10 @@ class CountryCell: UICollectionViewCell {
         super.awakeFromNib()
         
         
+        
     }
 
+    func configure(with country: Country) {
+        
+    }
 }

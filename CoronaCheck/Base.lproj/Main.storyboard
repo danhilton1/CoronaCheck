@@ -111,11 +111,11 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Aya-ra-t9b">
-                                <rect key="frame" x="132" y="638.5" width="150" height="45"/>
+                                <rect key="frame" x="127" y="638.5" width="160" height="50"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="150" id="9Gg-S7-n9D"/>
-                                    <constraint firstAttribute="height" constant="45" id="lg6-ZO-1gn"/>
+                                    <constraint firstAttribute="width" constant="160" id="9Gg-S7-n9D"/>
+                                    <constraint firstAttribute="height" constant="50" id="lg6-ZO-1gn"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                 <state key="normal" title="Countries">
@@ -218,7 +218,7 @@
                                 </collectionViewFlowLayout>
                                 <cells/>
                             </collectionView>
-                            <searchBar contentMode="redraw" searchBarStyle="minimal" placeholder="Search for a country" translatesAutoresizingMaskIntoConstraints="NO" id="wIF-0A-ZC4">
+                            <searchBar contentMode="redraw" searchBarStyle="minimal" placeholder="Search for a country" showsCancelButton="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wIF-0A-ZC4">
                                 <rect key="frame" x="0.0" y="81" width="414" height="56"/>
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>

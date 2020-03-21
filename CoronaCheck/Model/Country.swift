@@ -7,8 +7,10 @@
 //
 
 import Foundation
+import UIKit
 
-struct Country {
-    var country: String
+struct Country: Hashable {
+    var name: String
     var code: String
+    var flagImage: UIImage
 }
