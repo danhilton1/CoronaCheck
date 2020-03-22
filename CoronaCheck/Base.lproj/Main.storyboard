@@ -244,13 +244,16 @@
         <!--Map-->
         <scene sceneID="Q4C-ZQ-1fz">
             <objects>
-                <viewController id="xbp-Bc-fue" sceneMemberID="viewController">
+                <viewController id="xbp-Bc-fue" customClass="MapViewController" customModule="CoronaCheck" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="I0A-Pi-1iG">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="PXf-1s-hAR">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="813"/>
+                                <connections>
+                                    <outlet property="delegate" destination="xbp-Bc-fue" id="ynE-yQ-kFf"/>
+                                </connections>
                             </mapView>
                         </subviews>
                         <color key="backgroundColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
@@ -263,6 +266,9 @@
                         <viewLayoutGuide key="safeArea" id="Hm3-rS-asi"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Map" image="map" catalog="system" id="eg0-dh-cG2"/>
+                    <connections>
+                        <outlet property="mapView" destination="PXf-1s-hAR" id="XEj-oz-4x5"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BhF-Gc-rGc" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
