@@ -26,7 +26,14 @@ struct Latest: Codable {
 struct Location: Codable {
     let latest: Latest
     let country: String
+    let province: String
     let last_updated: String
+    let coordinates: Coordinate
+}
+
+struct Coordinate: Codable {
+    let latitude: String
+    let longitude: String
 }
 
 //struct Confirmed: Codable {

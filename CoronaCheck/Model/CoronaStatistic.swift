@@ -16,6 +16,7 @@ struct CoronaStatistic {
     var confirmed: Int
     var deaths: Int
     var recovered: Int
-    
+    var latitude: Double?
+    var longitude: Double?
     
 }
