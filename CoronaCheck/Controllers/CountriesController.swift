@@ -68,6 +68,7 @@ class CountriesController: UIViewController {
             }
         }
         countries = countries?.sorted { $0.name < $1.name }
+        countries?.insert(Country(name: "Worldwide", code: nil, flagImage: UIImage(named: "EarthImage")!), at: 0)
     }
     
     
@@ -76,6 +77,8 @@ class CountriesController: UIViewController {
     }
     
 }
+
+//MARK:- Extensions for CollectionView and SearchBar methods
 
 extension CountriesController: UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
     

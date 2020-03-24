@@ -13,8 +13,11 @@ class OverviewViewController: UIViewController, CountryDelegate {
 
     @IBOutlet weak var locationImageView: UIImageView!
     @IBOutlet weak var overviewTitleLabel: UILabel!
+    @IBOutlet weak var confirmedBackgroundLabel: UILabel!
     @IBOutlet weak var confirmedCasesNumberLabel: UILabel!
+    @IBOutlet weak var deathsBackgroundLabel: UILabel!
     @IBOutlet weak var confirmedDeathsNumberLabel: UILabel!
+    @IBOutlet weak var recoveriesBackgroundLabel: UILabel!
     @IBOutlet weak var confirmedRecoveriesNumberLabel: UILabel!
     @IBOutlet weak var lastUpdatedLabel: UILabel!
     @IBOutlet weak var refreshButton: UIButton!
@@ -40,24 +43,35 @@ class OverviewViewController: UIViewController, CountryDelegate {
         
         navigationController?.isNavigationBarHidden = true
 
-        if traitCollection.userInterfaceStyle == .dark {
-            view.backgroundColor = .systemGray6
-            countriesButton.setTitleColor(.black, for: .normal)
-            refreshButton.imageView?.tintColor = .white
-        }
-        else {
-            view.backgroundColor = .white
-            countriesButton.setTitleColor(.white, for: .normal)
-            refreshButton.imageView?.tintColor = .black
-        }
+        updateViewForUserInterfaceStyle()
+        
         inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
         outputFormatter.dateFormat = "E, d MMM yyyy HH:mm:ss"
         
+        confirmedBackgroundLabel.layer.masksToBounds = true
+        deathsBackgroundLabel.layer.masksToBounds = true
+        recoveriesBackgroundLabel.layer.masksToBounds = true
+        confirmedBackgroundLabel.layer.cornerRadius = 18
+        deathsBackgroundLabel.layer.cornerRadius = 18
+        recoveriesBackgroundLabel.layer.cornerRadius = 18
         countriesButton.layer.cornerRadius = 25
         
         refreshButton.rotate(duration: 1)
         
         downloadData(countryCode: countryCode)
+    }
+    
+    func updateViewForUserInterfaceStyle() {
+            if traitCollection.userInterfaceStyle == .dark {
+                view.backgroundColor = .systemGray6
+                countriesButton.setTitleColor(.black, for: .normal)
+                refreshButton.imageView?.tintColor = .white
+            }
+            else {
+                view.backgroundColor = .white
+                countriesButton.setTitleColor(.white, for: .normal)
+                refreshButton.imageView?.tintColor = .black
+            }
     }
     
     func downloadData(countryCode: String?) {
@@ -70,8 +84,14 @@ class OverviewViewController: UIViewController, CountryDelegate {
                 self.confirmedCasesNumberLabel.text = "\(corona.confirmed)"
                 self.confirmedDeathsNumberLabel.text = "\(corona.deaths)"
                 self.confirmedRecoveriesNumberLabel.text = "\(corona.recovered)"
-//                let date = self.inputFormatter.date(from: corona.lastUpdate) ?? Date()
-                self.lastUpdatedLabel.text = self.outputFormatter.string(from: Date())
+                
+                NetworkingServices.retrieveDateOfLastUpdate { (date) in
+                    let date = self.inputFormatter.date(from: date) ?? Date()
+                    DispatchQueue.main.async {
+                        self.lastUpdatedLabel.text = self.outputFormatter.string(from: date)
+                    }
+                    
+                }
             }
         }
         
@@ -119,16 +139,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        if traitCollection.userInterfaceStyle == .dark {
-            view.backgroundColor = .systemGray6
-            countriesButton.setTitleColor(.black, for: .normal)
-            refreshButton.imageView?.tintColor = .white
-        }
-        else {
-            view.backgroundColor = .white
-            countriesButton.setTitleColor(.white, for: .normal)
-            refreshButton.imageView?.tintColor = .black
-        }
+        updateViewForUserInterfaceStyle()
     }
 
 }

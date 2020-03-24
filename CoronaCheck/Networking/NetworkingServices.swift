@@ -74,4 +74,31 @@ struct NetworkingServices {
     }
     
     
+    static func retrieveDateOfLastUpdate(completion: @escaping (String) -> ()) {
+        
+        guard let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=GB") else { return }
+        
+        let request = URLRequest(url: url)
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            
+            guard let data = data else { return }
+            
+            do {
+                let covidData = try JSONDecoder().decode(CoronaCountryData.self, from: data)
+                
+                if let dateLastUpdated = covidData.locations.first?.last_updated {
+                    completion(dateLastUpdated)
+                }
+                else {
+                    print("Date could not be retrieved")
+                }
+            }
+            catch {
+                print(error)
+            }
+        }.resume()
+    }
+    
+    
 }

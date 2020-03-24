@@ -11,6 +11,6 @@ import UIKit
 
 struct Country: Hashable {
     var name: String
-    var code: String
+    var code: String?
     var flagImage: UIImage
 }
