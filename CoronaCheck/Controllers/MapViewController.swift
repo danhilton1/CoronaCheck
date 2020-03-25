@@ -341,6 +341,7 @@ extension MapViewController: CLLocationManagerDelegate {
 extension MapViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideCardView), object: nil)
         for statistic in allStatistics! {
             if statistic.province == view.annotation?.subtitle {
                 cardViewController.countryLabel.text = statistic.province
@@ -349,11 +350,15 @@ extension MapViewController: MKMapViewDelegate {
                 cardViewController.recoveriesLabel.text = "\(statistic.recovered)"
             }
         }
-        startInteractiveTransition(state: nextState, duration: 0.9)
+        startInteractiveTransition(state: .partExpanded, duration: 0.8)
         continueInteractiveTransition()
     }
     
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        perform(#selector(hideCardView), with: nil, afterDelay: 0)
+    }
+    
+    @objc func hideCardView() {
         startInteractiveTransition(state: .collapsed, duration: 0.9)
         continueInteractiveTransition()
     }
