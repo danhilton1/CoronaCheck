@@ -295,7 +295,7 @@
                                 </connections>
                             </mapView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="efc-hs-tU9">
-                                <rect key="frame" x="241" y="759" width="153" height="34"/>
+                                <rect key="frame" x="241" y="54" width="153" height="34"/>
                                 <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="16"/>
                                 <state key="normal" title="🔴 Confirmed Cases">
                                     <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -308,8 +308,8 @@
                         <color key="backgroundColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="PXf-1s-hAR" firstAttribute="leading" secondItem="Hm3-rS-asi" secondAttribute="leading" id="BhF-uW-Xze"/>
+                            <constraint firstItem="efc-hs-tU9" firstAttribute="top" secondItem="Hm3-rS-asi" secondAttribute="top" constant="10" id="OnE-3k-Q4C"/>
                             <constraint firstItem="PXf-1s-hAR" firstAttribute="top" secondItem="I0A-Pi-1iG" secondAttribute="top" id="Ssi-Qs-eyV"/>
-                            <constraint firstItem="Hm3-rS-asi" firstAttribute="bottom" secondItem="efc-hs-tU9" secondAttribute="bottom" constant="20" id="Zwi-nP-zKi"/>
                             <constraint firstItem="Hm3-rS-asi" firstAttribute="trailing" secondItem="PXf-1s-hAR" secondAttribute="trailing" id="dea-Pc-5ab"/>
                             <constraint firstItem="Hm3-rS-asi" firstAttribute="trailing" secondItem="efc-hs-tU9" secondAttribute="trailing" constant="20" id="tHC-Gm-ms5"/>
                             <constraint firstItem="Hm3-rS-asi" firstAttribute="bottom" secondItem="PXf-1s-hAR" secondAttribute="bottom" id="tR6-Lt-UtM"/>

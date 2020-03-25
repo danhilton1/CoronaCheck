@@ -17,19 +17,209 @@ class MapViewController: UIViewController {
     
     let locationManager = CLLocationManager()
     
+    var cardViewController: CardViewController!
+    var visualEffectView: UIVisualEffectView!
+    
+    var cardHeight: CGFloat!
+    let cardHandleAreaHeight: CGFloat = 40
+    
+    var cardPartExpanded = false
+    var cardFullyExpanded = false
+    
+    var nextState: CardState {
+        if cardPartExpanded {
+            return .fullExpanded
+        }
+        else if cardFullyExpanded {
+            return .collapsed
+        }
+        else {
+            return .partExpanded
+        }
+    }
+    
+    var previousState: CardState {
+        if cardFullyExpanded {
+            return .partExpanded
+        }
+        else {
+            return .collapsed
+        }
+    }
+    
+    var runningAnimations = [UIViewPropertyAnimator]()
+    var animationProgressWhenInterrupted: CGFloat = 0
+    
+    enum CardState {
+        case partExpanded
+        case fullExpanded
+        case collapsed
+    }
+    
     enum StatisticDetail {
         case cases
         case deaths
         case recoveries
     }
     
+    var allStatistics: [CoronaStatistic]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        setUpCard()
+        setUpCardViewLabels()
         checkLocationServices()
         addAnnotations(forStatistic: .cases)
         
+    }
+    
+    
+    func setUpCard() {
+        
+        cardHeight = self.view.frame.height - 100
+        
+        visualEffectView = UIVisualEffectView()
+        visualEffectView.frame = self.view.frame
+        self.view.addSubview(visualEffectView)
+        
+        cardViewController = CardViewController(nibName: "CardView", bundle: nil)
+        self.addChild(cardViewController)
+        self.view.addSubview(cardViewController.view)
+        
+        cardViewController.view.frame = CGRect(x: 0, y: self.view.bounds.height - ((self.tabBarController?.tabBar.frame.height ?? 100) + cardHandleAreaHeight), width: self.view.bounds.width, height: cardHeight)
+        
+        cardViewController.view.clipsToBounds = true
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleCardTap(_:)))
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handleCardPan(_:)))
+        
+        cardViewController.view.addGestureRecognizer(tapGestureRecognizer)
+        cardViewController.view.addGestureRecognizer(panGestureRecognizer)
+        
+        cardViewController.view.layer.cornerRadius = 16
+        cardViewController.lineView.layer.cornerRadius = 3
+        visualEffectView.alpha = 0
+        
+    }
+    
+    func setUpCardViewLabels() {
+        cardViewController.countryLabel.text = "Worldwide"
+        
+        NetworkingServices.downloadData(forCountryCode: nil) { [weak self] (statistic) in
+            DispatchQueue.main.async {
+                self?.cardViewController.casesLabel.text = "\(statistic.confirmed)"
+                self?.cardViewController.deathsLabel.text = "\(statistic.deaths)"
+                self?.cardViewController.recoveriesLabel.text = "\(statistic.recovered)"
+            }
+        }
+    }
+    
+    
+    @objc func handleCardTap(_ recognizer: UITapGestureRecognizer) {
+        
+    }
+    
+    @objc func handleCardPan(_ recognizer: UIPanGestureRecognizer) {
+        switch recognizer.state {
+        case .began:
+            if recognizer.velocity(in: cardViewController.view).y < 0 {
+                startInteractiveTransition(state: nextState, duration: 0.9)
+            }
+            else {
+                startInteractiveTransition(state: previousState, duration: 0.9)
+            }
+        case .changed:
+            let translation = recognizer.translation(in: cardViewController.view)
+            
+//            recognizer.view!.center = CGPoint(x: recognizer.view!.center.x, y: recognizer.view!.center.y + translation.y)
+//            recognizer.setTranslation(CGPoint(x: 0, y: 0), in: cardViewController.view)
+            
+            var fractionComplete = translation.y / (cardHeight - 300)
+
+            if translation.y < 0 && !cardFullyExpanded {
+                fractionComplete = -fractionComplete
+            }
+
+            updateInteractiveTransition(fractionCompleted: fractionComplete)
+        case .ended:
+            continueInteractiveTransition()
+        default:
+            break
+        }
+    }
+    
+    func animateTransitionIfNeeded(state: CardState, duration: TimeInterval) {
+        if runningAnimations.isEmpty {
+            
+            let frameAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
+                switch state {
+                case .partExpanded:
+                    self.cardViewController.view.frame.origin.y = self.view.frame.height - (self.cardHeight - 400)
+                case .fullExpanded:
+                    self.cardViewController.view.frame.origin.y = self.view.frame.height - self.cardHeight
+                case .collapsed:
+                    self.cardViewController.view.frame.origin.y = self.view.frame.height - self.cardHandleAreaHeight - (self.tabBarController?.tabBar.frame.height ?? 100)
+                }
+            }
+            frameAnimator.addCompletion { _ in
+                if state == .partExpanded {
+                    self.cardPartExpanded = true
+                    self.cardFullyExpanded = false
+                }
+                else if state == .fullExpanded {
+                    self.cardPartExpanded = false
+                    self.cardFullyExpanded = true
+                }
+                else {
+                    self.cardPartExpanded = false
+                    self.cardFullyExpanded = false
+                }
+                
+                self.runningAnimations.removeAll()
+            }
+            frameAnimator.startAnimation()
+            runningAnimations.append(frameAnimator)
+            
+            let blurAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
+                switch state {
+                case .partExpanded:
+                    self.visualEffectView.alpha = 0
+                    self.visualEffectView.effect = nil
+                case .fullExpanded:
+                    self.visualEffectView.alpha = 1
+                    self.visualEffectView.effect = UIBlurEffect(style: .dark)
+                case .collapsed:
+                    self.visualEffectView.alpha = 0
+                    self.visualEffectView.effect = nil
+                }
+            }
+            blurAnimator.startAnimation()
+            runningAnimations.append(blurAnimator)
+        }
+    }
+    
+    
+    func startInteractiveTransition(state: CardState, duration: TimeInterval) {
+        if runningAnimations.isEmpty {
+            animateTransitionIfNeeded(state: state, duration: duration)
+        }
+        for animator in runningAnimations {
+            animator.pauseAnimation()
+            animationProgressWhenInterrupted = animator.fractionComplete
+        }
+    }
+    
+    func updateInteractiveTransition(fractionCompleted: CGFloat) {
+        for animator in runningAnimations {
+            animator.fractionComplete = fractionCompleted + animationProgressWhenInterrupted
+        }
+    }
+    
+    func continueInteractiveTransition() {
+        for animator in runningAnimations {
+            animator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
+        }
     }
     
     func centreViewOnUserLocation() {
@@ -76,6 +266,8 @@ class MapViewController: UIViewController {
         var annontations = [MKPointAnnotation]()
         
         NetworkingServices.downloadAllLocationData { (statistics) in
+            self.allStatistics = statistics
+            
             for statistic in statistics {
                 if let lat = statistic.latitude, let lon = statistic.longitude {
                     let annotation = MKPointAnnotation()
@@ -143,4 +335,26 @@ extension MapViewController: CLLocationManagerDelegate {
         
     }
     
+}
+
+
+extension MapViewController: MKMapViewDelegate {
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        for statistic in allStatistics! {
+            if statistic.province == view.annotation?.subtitle {
+                cardViewController.countryLabel.text = statistic.province
+                cardViewController.casesLabel.text = "\(statistic.confirmed)"
+                cardViewController.deathsLabel.text = "\(statistic.deaths)"
+                cardViewController.recoveriesLabel.text = "\(statistic.recovered)"
+            }
+        }
+        startInteractiveTransition(state: nextState, duration: 0.9)
+        continueInteractiveTransition()
+    }
+    
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        startInteractiveTransition(state: .collapsed, duration: 0.9)
+        continueInteractiveTransition()
+    }
 }

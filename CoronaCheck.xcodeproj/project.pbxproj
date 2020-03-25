@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		1884A16BECC8BB5ACA911D10 /* Pods_CoronaCheck_CoronaCheckUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA39D3CC72551D81CC7F37AB /* Pods_CoronaCheck_CoronaCheckUITests.framework */; };
 		377A7F5E2422922900E0EC36 /* CountriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377A7F5D2422922900E0EC36 /* CountriesController.swift */; };
+		3796C480242B9C27009F5FD1 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3796C47F242B9C27009F5FD1 /* CardView.swift */; };
+		379B2389242A74FF00C305DC /* CardView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 379B2388242A74FF00C305DC /* CardView.xib */; };
+		379B238B242A752000C305DC /* CardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379B238A242A751F00C305DC /* CardViewController.swift */; };
 		37AB89482423E5B9007970EC /* CountryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37AB89472423E5B9007970EC /* CountryProtocol.swift */; };
 		37AB894A24240E7D007970EC /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37AB894924240E7D007970EC /* Country.swift */; };
 		37B030722420129F00A34E16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B030712420129F00A34E16 /* AppDelegate.swift */; };
@@ -50,6 +53,9 @@
 		0788F6E8F07C88B92FF1F6CD /* Pods-CoronaCheckTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoronaCheckTests.release.xcconfig"; path = "Target Support Files/Pods-CoronaCheckTests/Pods-CoronaCheckTests.release.xcconfig"; sourceTree = "<group>"; };
 		315BD615B05B1CB114EFAF45 /* Pods_CoronaCheck.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CoronaCheck.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		377A7F5D2422922900E0EC36 /* CountriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountriesController.swift; sourceTree = "<group>"; };
+		3796C47F242B9C27009F5FD1 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		379B2388242A74FF00C305DC /* CardView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CardView.xib; sourceTree = "<group>"; };
+		379B238A242A751F00C305DC /* CardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewController.swift; sourceTree = "<group>"; };
 		37AB89472423E5B9007970EC /* CountryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryProtocol.swift; sourceTree = "<group>"; };
 		37AB894924240E7D007970EC /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		37B0306E2420129F00A34E16 /* CoronaCheck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoronaCheck.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -191,6 +197,7 @@
 				37B030A42420236A00A34E16 /* OverviewViewController.swift */,
 				377A7F5D2422922900E0EC36 /* CountriesController.swift */,
 				37F634C92427A2F400A96E7B /* MapViewController.swift */,
+				379B238A242A751F00C305DC /* CardViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -200,6 +207,8 @@
 			children = (
 				37F6398C2422BD9C0060F40C /* CountryCell.swift */,
 				37F6398D2422BD9C0060F40C /* CountryCell.xib */,
+				379B2388242A74FF00C305DC /* CardView.xib */,
+				3796C47F242B9C27009F5FD1 /* CardView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -346,6 +355,7 @@
 			files = (
 				37F6398F2422BD9C0060F40C /* CountryCell.xib in Resources */,
 				37B0307E242012A000A34E16 /* LaunchScreen.storyboard in Resources */,
+				379B2389242A74FF00C305DC /* CardView.xib in Resources */,
 				37B0307B242012A000A34E16 /* Assets.xcassets in Resources */,
 				37B030792420129F00A34E16 /* Main.storyboard in Resources */,
 			);
@@ -482,7 +492,9 @@
 				37B030722420129F00A34E16 /* AppDelegate.swift in Sources */,
 				37B030AA24202A6400A34E16 /* CodableStructs.swift in Sources */,
 				37B030A52420236A00A34E16 /* OverviewViewController.swift in Sources */,
+				3796C480242B9C27009F5FD1 /* CardView.swift in Sources */,
 				37B030A8242024DB00A34E16 /* NetworkingServices.swift in Sources */,
+				379B238B242A752000C305DC /* CardViewController.swift in Sources */,
 				37B030EA2420305100A34E16 /* SceneDelegate.swift in Sources */,
 				37AB894A24240E7D007970EC /* Country.swift in Sources */,
 				37F6398E2422BD9C0060F40C /* CountryCell.swift in Sources */,
