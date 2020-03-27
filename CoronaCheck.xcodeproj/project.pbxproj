@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1884A16BECC8BB5ACA911D10 /* Pods_CoronaCheck_CoronaCheckUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA39D3CC72551D81CC7F37AB /* Pods_CoronaCheck_CoronaCheckUITests.framework */; };
+		371D55C2242CAED500156270 /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371D55C1242CAED500156270 /* UIViewExtension.swift */; };
 		377A7F5E2422922900E0EC36 /* CountriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377A7F5D2422922900E0EC36 /* CountriesController.swift */; };
 		3796C480242B9C27009F5FD1 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3796C47F242B9C27009F5FD1 /* CardView.swift */; };
 		379B2389242A74FF00C305DC /* CardView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 379B2388242A74FF00C305DC /* CardView.xib */; };
@@ -52,6 +53,7 @@
 /* Begin PBXFileReference section */
 		0788F6E8F07C88B92FF1F6CD /* Pods-CoronaCheckTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoronaCheckTests.release.xcconfig"; path = "Target Support Files/Pods-CoronaCheckTests/Pods-CoronaCheckTests.release.xcconfig"; sourceTree = "<group>"; };
 		315BD615B05B1CB114EFAF45 /* Pods_CoronaCheck.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CoronaCheck.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		371D55C1242CAED500156270 /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		377A7F5D2422922900E0EC36 /* CountriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountriesController.swift; sourceTree = "<group>"; };
 		3796C47F242B9C27009F5FD1 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		379B2388242A74FF00C305DC /* CardView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CardView.xib; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				37AB89472423E5B9007970EC /* CountryProtocol.swift */,
+				371D55C1242CAED500156270 /* UIViewExtension.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -165,8 +168,6 @@
 				37B030A12420234600A34E16 /* Controllers */,
 				37B030712420129F00A34E16 /* AppDelegate.swift */,
 				37B030E92420305100A34E16 /* SceneDelegate.swift */,
-				37B030772420129F00A34E16 /* Main.storyboard */,
-				37B0307C242012A000A34E16 /* LaunchScreen.storyboard */,
 				37B0307A242012A000A34E16 /* Assets.xcassets */,
 				37B0307F242012A000A34E16 /* Info.plist */,
 			);
@@ -205,6 +206,8 @@
 		37B030A22420235000A34E16 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				37B030772420129F00A34E16 /* Main.storyboard */,
+				37B0307C242012A000A34E16 /* LaunchScreen.storyboard */,
 				37F6398C2422BD9C0060F40C /* CountryCell.swift */,
 				37F6398D2422BD9C0060F40C /* CountryCell.xib */,
 				379B2388242A74FF00C305DC /* CardView.xib */,
@@ -489,6 +492,7 @@
 				37AB89482423E5B9007970EC /* CountryProtocol.swift in Sources */,
 				37B030AC24202C1A00A34E16 /* CoronaStatistic.swift in Sources */,
 				377A7F5E2422922900E0EC36 /* CountriesController.swift in Sources */,
+				371D55C2242CAED500156270 /* UIViewExtension.swift in Sources */,
 				37B030722420129F00A34E16 /* AppDelegate.swift in Sources */,
 				37B030AA24202A6400A34E16 /* CodableStructs.swift in Sources */,
 				37B030A52420236A00A34E16 /* OverviewViewController.swift in Sources */,

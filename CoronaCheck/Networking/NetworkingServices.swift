@@ -42,32 +42,28 @@ struct NetworkingServices {
                         
                         var totalConfirmed = 0
                         var totalDeaths = 0
-                        var totalRecovered = 0
                         
                         let locations = covidData.locations
                         for location in locations {
                             totalConfirmed += location.latest.confirmed
                             totalDeaths += location.latest.deaths
-                            totalRecovered += location.latest.recovered
                         }
-                        statistic = CoronaStatistic(province: nil, country: locations.first?.country, confirmed: totalConfirmed, deaths: totalDeaths, recovered: totalRecovered, latitude: nil, longitude: nil)
+                        
+                        statistic = CoronaStatistic(province: nil, country: locations.first?.country, confirmed: totalConfirmed, deaths: totalDeaths, latitude: nil, longitude: nil)
                         
                     }
                     else {
                         let covidData = try JSONDecoder().decode(CoronaAllData.self, from: data)
                         
-                        statistic = CoronaStatistic(province: nil, country: nil, confirmed: covidData.latest.confirmed, deaths: covidData.latest.deaths, recovered: covidData.latest.recovered)
-                        
+                        statistic = CoronaStatistic(province: nil, country: nil, confirmed: covidData.latest.confirmed, deaths: covidData.latest.deaths)
                     }
                     completion(statistic)
-                    
                 }
                 catch {
                     print(error)
                 }
             }
         }
-
         dataTask.resume()
     }
     
@@ -109,7 +105,7 @@ struct NetworkingServices {
             guard let data = data else { return }
             
             do {
-                var statistic = CoronaStatistic(province: nil, country: nil, confirmed: 0, deaths: 0, recovered: 0, latitude: nil, longitude: nil)
+                var statistic = CoronaStatistic(province: nil, country: nil, confirmed: 0, deaths: 0, latitude: nil, longitude: nil)
                 var allStatistics = [CoronaStatistic]()
                 
                 let covidData = try JSONDecoder().decode(CoronaCountryData.self, from: data)
@@ -120,7 +116,6 @@ struct NetworkingServices {
                     statistic.country = location.country
                     statistic.confirmed = location.latest.confirmed
                     statistic.deaths = location.latest.deaths
-                    statistic.recovered = location.latest.recovered
                     statistic.latitude = Double(location.coordinates.latitude)
                     statistic.longitude = Double(location.coordinates.longitude)
                     if location.province == "" {

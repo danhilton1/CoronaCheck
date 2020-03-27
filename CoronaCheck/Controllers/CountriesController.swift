@@ -17,12 +17,16 @@ class CountriesController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var searchBar: UISearchBar!
     
+    //MARK:- Properties
+    
     private var dataSource: DataSource!
     private var snapshot: DataSourceSnapshot!
     
     var delegate: CountryDelegate?
     
     var countries: [Country]?
+    
+    //MARK:- View Methodcs
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -11,6 +11,7 @@ import FlagKit
 
 class OverviewViewController: UIViewController, CountryDelegate {
 
+    //IBOutlets
     @IBOutlet weak var locationImageView: UIImageView!
     @IBOutlet weak var overviewTitleLabel: UILabel!
     @IBOutlet weak var confirmedBackgroundLabel: UILabel!
@@ -29,6 +30,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
     var countryCode: String?
     var finishedDownloading = false
     
+    //MARK:- View Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,23 +76,45 @@ class OverviewViewController: UIViewController, CountryDelegate {
             }
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        updateViewForUserInterfaceStyle()
+    }
+    
+    func animateNumbersInLabels() {
+        DispatchQueue.global(qos: .background).async {
+            while !self.finishedDownloading {
+                DispatchQueue.main.async {
+                    self.confirmedCasesNumberLabel.text = "\(Int.random(in: 10000...500000))"
+                    self.confirmedDeathsNumberLabel.text = "\(Int.random(in: 1000...50000))"
+                    self.confirmedRecoveriesNumberLabel.text = "\(Int.random(in: 1000...300000))"
+                }
+                usleep(1000)
+            }
+        }
+    }
+    
+    //MARK:- Data Methods
+    
     func downloadData(countryCode: String?) {
         
         NetworkingServices.downloadData(forCountryCode: countryCode) { (corona) in
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                
                 self.finishedDownloading = true
+                
                 self.refreshButton.layer.removeAllAnimations()
                 
-                self.confirmedCasesNumberLabel.text = "\(corona.confirmed)"
-                self.confirmedDeathsNumberLabel.text = "\(corona.deaths)"
-                self.confirmedRecoveriesNumberLabel.text = "\(corona.recovered)"
-                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
+                    self.confirmedCasesNumberLabel.text = "\(corona.confirmed)"
+                    self.confirmedDeathsNumberLabel.text = "\(corona.deaths)"
+                    self.confirmedRecoveriesNumberLabel.text = "\(corona.activeOrRecovered)"
+                }
                 NetworkingServices.retrieveDateOfLastUpdate { (date) in
                     let date = self.inputFormatter.date(from: date) ?? Date()
                     DispatchQueue.main.async {
                         self.lastUpdatedLabel.text = self.outputFormatter.string(from: date)
                     }
-                    
                 }
             }
         }
@@ -98,6 +122,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
     }
     
     func loadDataFromCountry(country: Country) {
+        countryCode = country.code
         finishedDownloading = false
         locationImageView.image = country.flagImage
         refreshButton.rotate(duration: 1)
@@ -118,18 +143,6 @@ class OverviewViewController: UIViewController, CountryDelegate {
         
     }
     
-    func animateNumbersInLabels() {
-        DispatchQueue.global(qos: .background).async {
-            while !self.finishedDownloading {
-                DispatchQueue.main.async {
-                    self.confirmedCasesNumberLabel.text = "\(Int.random(in: 10000...500000))"
-                    self.confirmedDeathsNumberLabel.text = "\(Int.random(in: 1000...50000))"
-                    self.confirmedRecoveriesNumberLabel.text = "\(Int.random(in: 1000...300000))"
-                }
-                usleep(1000)
-            }
-        }
-    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "GoToCountries" {
@@ -138,21 +151,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
         }
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        updateViewForUserInterfaceStyle()
-    }
 
 }
 
 
-extension UIView {
-    func rotate(duration: CFTimeInterval = 3) {
-        let rotateAnimation = CABasicAnimation(keyPath: "transform.rotation")
-        rotateAnimation.fromValue = 0.0
-        rotateAnimation.toValue = CGFloat(Double.pi * 2)
-        rotateAnimation.isRemovedOnCompletion = false
-        rotateAnimation.duration = duration
-        rotateAnimation.repeatCount = Float.infinity
-        self.layer.add(rotateAnimation, forKey: nil)
-    }
-}

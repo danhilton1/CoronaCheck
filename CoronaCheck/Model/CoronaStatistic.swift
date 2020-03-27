@@ -15,7 +15,9 @@ struct CoronaStatistic {
 //    var lastUpdate: String
     var confirmed: Int
     var deaths: Int
-    var recovered: Int
+    var activeOrRecovered: Int {
+        return confirmed - deaths
+    }
     var latitude: Double?
     var longitude: Double?
     

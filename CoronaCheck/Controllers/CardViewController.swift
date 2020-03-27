@@ -32,6 +32,8 @@ class CardViewController: UIViewController {
         handleAreaView.backgroundColor = .systemGray4
         mainView.backgroundColor = .systemGray5
         
+        updateViewForUserInterfaceStyle()
+        
         casesBackgroundLabel.layer.masksToBounds = true
         deathsBackgroundLabel.layer.masksToBounds = true
         recoveriesBackgroundLabel.layer.masksToBounds = true
@@ -39,6 +41,21 @@ class CardViewController: UIViewController {
         casesBackgroundLabel.layer.cornerRadius = 18
         deathsBackgroundLabel.layer.cornerRadius = 18
         recoveriesBackgroundLabel.layer.cornerRadius = 18
+    }
+    
+    func updateViewForUserInterfaceStyle() {
+            if traitCollection.userInterfaceStyle == .dark {
+                mainView.backgroundColor = .systemGray5
+                handleAreaView.backgroundColor = .systemGray4
+            }
+            else {
+                mainView.backgroundColor = .white
+                handleAreaView.backgroundColor = .systemGray6
+            }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        updateViewForUserInterfaceStyle()
     }
     
 

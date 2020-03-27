@@ -12,11 +12,26 @@ import CoreLocation
 
 class MapViewController: UIViewController {
 
+    enum CardState {
+        case partExpanded
+        case fullExpanded
+        case collapsed
+    }
+    
+    enum StatisticDetail {
+        case cases
+        case deaths
+        case recoveries
+    }
+    
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var keyButton: UIButton!
     
+    //MARK:- Properties
+    
     let locationManager = CLLocationManager()
     
+    // Properties for card view
     var cardViewController: CardViewController!
     var visualEffectView: UIVisualEffectView!
     
@@ -50,19 +65,9 @@ class MapViewController: UIViewController {
     var runningAnimations = [UIViewPropertyAnimator]()
     var animationProgressWhenInterrupted: CGFloat = 0
     
-    enum CardState {
-        case partExpanded
-        case fullExpanded
-        case collapsed
-    }
-    
-    enum StatisticDetail {
-        case cases
-        case deaths
-        case recoveries
-    }
-    
     var allStatistics: [CoronaStatistic]?
+    
+    //MARK:- viewDidLoad
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,6 +79,7 @@ class MapViewController: UIViewController {
         
     }
     
+    //MARK:- Card View Methods
     
     func setUpCard() {
         
@@ -91,10 +97,8 @@ class MapViewController: UIViewController {
         
         cardViewController.view.clipsToBounds = true
         
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleCardTap(_:)))
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handleCardPan(_:)))
         
-        cardViewController.view.addGestureRecognizer(tapGestureRecognizer)
         cardViewController.view.addGestureRecognizer(panGestureRecognizer)
         
         cardViewController.view.layer.cornerRadius = 16
@@ -110,15 +114,11 @@ class MapViewController: UIViewController {
             DispatchQueue.main.async {
                 self?.cardViewController.casesLabel.text = "\(statistic.confirmed)"
                 self?.cardViewController.deathsLabel.text = "\(statistic.deaths)"
-                self?.cardViewController.recoveriesLabel.text = "\(statistic.recovered)"
+                self?.cardViewController.recoveriesLabel.text = "\(statistic.activeOrRecovered)"
             }
         }
     }
     
-    
-    @objc func handleCardTap(_ recognizer: UITapGestureRecognizer) {
-        
-    }
     
     @objc func handleCardPan(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
@@ -222,6 +222,8 @@ class MapViewController: UIViewController {
         }
     }
     
+    //MARK:- Map/Location Methods
+    
     func centreViewOnUserLocation() {
         if let location = locationManager.location?.coordinate {
             let region = MKCoordinateRegion.init(center: location, latitudinalMeters: 50000, longitudinalMeters: 50000)
@@ -278,7 +280,7 @@ class MapViewController: UIViewController {
                         annotation.title = "\(statistic.deaths)"
                     }
                     else {
-                        annotation.title = "\(statistic.recovered)"
+                        annotation.title = "\(statistic.activeOrRecovered)"
                     }
                     
                     annotation.subtitle = statistic.province
@@ -306,7 +308,7 @@ class MapViewController: UIViewController {
             self.keyButton.setTitle("🔴 Confirmed Deaths", for: .normal)
         })
         
-        ac.addAction(UIAlertAction(title: "Confirmed Recoveries", style: .default) { _ in
+        ac.addAction(UIAlertAction(title: "Active or Recovered", style: .default) { _ in
             self.mapView.removeAnnotations(self.mapView.annotations)
             self.addAnnotations(forStatistic: .recoveries)
             self.keyButton.setTitle("🔴 Confirmed Recoveries", for: .normal)
@@ -321,6 +323,7 @@ class MapViewController: UIViewController {
 
 }
 
+// MARK:- Extension for CLLocationManagerDelegate
 
 extension MapViewController: CLLocationManagerDelegate {
     
@@ -337,6 +340,7 @@ extension MapViewController: CLLocationManagerDelegate {
     
 }
 
+// MARK:- Extension for MapView Delegate Methods
 
 extension MapViewController: MKMapViewDelegate {
     
@@ -347,7 +351,7 @@ extension MapViewController: MKMapViewDelegate {
                 cardViewController.countryLabel.text = statistic.province
                 cardViewController.casesLabel.text = "\(statistic.confirmed)"
                 cardViewController.deathsLabel.text = "\(statistic.deaths)"
-                cardViewController.recoveriesLabel.text = "\(statistic.recovered)"
+                cardViewController.recoveriesLabel.text = "\(statistic.activeOrRecovered)"
             }
         }
         startInteractiveTransition(state: .partExpanded, duration: 0.8)
