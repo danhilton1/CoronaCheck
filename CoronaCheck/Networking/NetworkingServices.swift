@@ -105,39 +105,104 @@ struct NetworkingServices {
             guard let data = data else { return }
             
             do {
-                var statistic = CoronaStatistic(province: nil, country: nil, confirmed: 0, deaths: 0, latitude: nil, longitude: nil)
+                var statistic = CoronaStatistic(province: nil, country: nil, confirmed: 0, deaths: 0, yesterdayConfirmed: nil, yesterdayDeaths: nil, latitude: nil, longitude: nil)
                 var allStatistics = [CoronaStatistic]()
                 
                 let covidData = try JSONDecoder().decode(CoronaCountryData.self, from: data)
                 
+                let dispatchGroup = DispatchGroup()
+                
                 let locations = covidData.locations
                 for location in locations {
+                    dispatchGroup.enter()
                     
-                    statistic.country = location.country
-                    statistic.confirmed = location.latest.confirmed
-                    statistic.deaths = location.latest.deaths
-                    statistic.latitude = Double(location.coordinates.latitude)
-                    statistic.longitude = Double(location.coordinates.longitude)
-                    if location.province == "" {
-                        statistic.province = location.country
-                    }
-                    else {
-                        statistic.province = location.province
-                    }
-                    if location.country == "United Kingdom" && location.province == "" {
-                        statistic.latitude = 52.9548
-                        statistic.longitude = -1.581
-                    }
+                    let currentCases = location.latest.confirmed
+                    let currentDeaths = location.latest.deaths
+                    
+                    NetworkingServices.downloadTimelineData(countryID: location.id, currentCases: currentCases, currentDeaths: currentDeaths) { (cases, deaths) in
+                        
+                        statistic.yesterdayConfirmed = cases
+                        statistic.yesterdayDeaths = deaths
+                        statistic.country = location.country
+                        statistic.confirmed = currentCases
+                        statistic.deaths = currentDeaths
+                        
+                        statistic.latitude = Double(location.coordinates.latitude)
+                        statistic.longitude = Double(location.coordinates.longitude)
+                        if location.province == "" {
+                            statistic.province = location.country
+                        }
+                        else {
+                            statistic.province = location.province
+                        }
+                        if location.country == "United Kingdom" && location.province == "" {
+                            statistic.latitude = 52.9548
+                            statistic.longitude = -1.581
+                        }
 
-                    allStatistics.append(statistic)
-                    
-                    
+                        allStatistics.append(statistic)
+                        dispatchGroup.leave()
+                    }
                 }
-                completion(allStatistics)
+                dispatchGroup.notify(queue: .main) {
+                    completion(allStatistics)
+                }
+                
             }
             catch {
                 print(error)
             }   
+        }.resume()
+    }
+    
+    static func downloadTimelineData(countryID: Int, currentCases: Int, currentDeaths: Int, completion: @escaping (Int, Int) -> ()) {
+        
+        guard let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations/\(countryID)") else { return }
+        
+        let request = URLRequest(url: url)
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            
+            guard let data = data else { return }
+            
+            do {
+                let covidData = try JSONDecoder().decode(CoronaCountryIDData.self, from: data)
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+                
+                var casesDictionary = [Date: Int]()
+                
+                for (key, value) in covidData.location.timelines.confirmed.timeline {
+                    let date = dateFormatter.date(from: key)
+                    casesDictionary[date!] = value
+                }
+                var sortedCases = casesDictionary.sorted { $0.0 < $1.0 }
+                var yesterdayConfirmed = sortedCases.last?.value ?? 0
+                if yesterdayConfirmed == currentCases {
+                    sortedCases = sortedCases.dropLast()
+                    yesterdayConfirmed = sortedCases.last?.value ?? 0
+                }
+                
+                var deathsDictionary = [Date: Int]()
+                
+                for (key, value) in covidData.location.timelines.deaths.timeline {
+                    let date = dateFormatter.date(from: key)
+                    deathsDictionary[date!] = value
+                }
+                var sortedDeaths = deathsDictionary.sorted { $0.0 < $1.0 }
+                var yesterdayDeaths = sortedDeaths.last?.value ?? 0
+                if yesterdayDeaths == currentDeaths {
+                    sortedDeaths = sortedDeaths.dropLast()
+                    yesterdayDeaths = sortedDeaths.last?.value ?? 0
+                }
+                 
+                completion(yesterdayConfirmed, yesterdayDeaths)
+                
+            }
+            catch {
+                
+            }
         }.resume()
     }
     

@@ -24,6 +24,10 @@ class CardViewController: UIViewController {
     @IBOutlet weak var casesLabel: UILabel!
     @IBOutlet weak var deathsLabel: UILabel!
     @IBOutlet weak var recoveriesLabel: UILabel!
+    @IBOutlet weak var casesChangeLabel: UILabel!
+    @IBOutlet weak var deathsChangeLabel: UILabel!
+    @IBOutlet weak var activeChangeLabel: UILabel!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

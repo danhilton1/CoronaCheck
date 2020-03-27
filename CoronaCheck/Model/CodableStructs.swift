@@ -17,6 +17,10 @@ struct CoronaCountryData: Codable {
     let locations: [Location]
 }
 
+struct CoronaCountryIDData: Codable {
+    let location: LocationWithID
+}
+
 struct Latest: Codable {
     let confirmed: Int
     let deaths: Int
@@ -24,11 +28,13 @@ struct Latest: Codable {
 }
 
 struct Location: Codable {
+    let id: Int
     let latest: Latest
     let country: String
     let province: String
     let last_updated: String
     let coordinates: Coordinate
+    
 }
 
 struct Coordinate: Codable {
@@ -36,17 +42,24 @@ struct Coordinate: Codable {
     let longitude: String
 }
 
-//struct Confirmed: Codable {
-//    let last_updated: String
-//    let latest: Int
-//    let locations: [Location]
-//}
-//
-//struct Deaths: Codable {
-//    let last_updated: String
-//    let latest: Int
-//    let locations: [Location]
-//}
+struct LocationWithID: Codable {
+    let timelines: Timelines
+}
+
+struct Timelines: Codable {
+    let confirmed: Confirmed
+    let deaths: Deaths
+}
+
+struct Confirmed: Codable {
+    let latest: Int
+    let timeline: [String: Int]
+}
+
+struct Deaths: Codable {
+    let latest: Int
+    let timeline: [String: Int]
+}
 //
 //struct Recovered: Codable {
 //    let last_updated: String

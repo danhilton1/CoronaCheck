@@ -224,7 +224,7 @@ class MapViewController: UIViewController {
     
     //MARK:- Map/Location Methods
     
-    func centreViewOnUserLocation() {
+    func centerViewOnUserLocation() {
         if let location = locationManager.location?.coordinate {
             let region = MKCoordinateRegion.init(center: location, latitudinalMeters: 50000, longitudinalMeters: 50000)
             mapView.setRegion(region, animated: true)
@@ -245,7 +245,7 @@ class MapViewController: UIViewController {
         switch CLLocationManager.authorizationStatus() {
         case .authorizedWhenInUse:
             mapView.showsUserLocation = true
-            centreViewOnUserLocation()
+            centerViewOnUserLocation()
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
         case .denied:
@@ -292,6 +292,11 @@ class MapViewController: UIViewController {
         }
     }
     
+    @IBAction func locationButtonTapped(_ sender: UIButton) {
+        centerViewOnUserLocation()
+    }
+    
+    
     @IBAction func keyButtonTapped(_ sender: UIButton) {
         
         let ac = UIAlertController(title: "Statistic", message: "Please select which statistic to display.", preferredStyle: .actionSheet)
@@ -311,7 +316,7 @@ class MapViewController: UIViewController {
         ac.addAction(UIAlertAction(title: "Active or Recovered", style: .default) { _ in
             self.mapView.removeAnnotations(self.mapView.annotations)
             self.addAnnotations(forStatistic: .recoveries)
-            self.keyButton.setTitle("🔴 Confirmed Recoveries", for: .normal)
+            self.keyButton.setTitle("🔴 Active or Recovered", for: .normal)
         })
         
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -348,10 +353,15 @@ extension MapViewController: MKMapViewDelegate {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideCardView), object: nil)
         for statistic in allStatistics! {
             if statistic.province == view.annotation?.subtitle {
+                let changeInConfirmed = statistic.changeInConfirmed ?? 0
+                let changeInDeaths = statistic.changeInDeaths ?? 0
                 cardViewController.countryLabel.text = statistic.province
                 cardViewController.casesLabel.text = "\(statistic.confirmed)"
                 cardViewController.deathsLabel.text = "\(statistic.deaths)"
                 cardViewController.recoveriesLabel.text = "\(statistic.activeOrRecovered)"
+                cardViewController.casesChangeLabel.text = "(+\(changeInConfirmed))*"
+                cardViewController.deathsChangeLabel.text = "(+\(changeInDeaths))*"
+                cardViewController.activeChangeLabel.text = "(+\(changeInConfirmed - changeInDeaths))*"
             }
         }
         startInteractiveTransition(state: .partExpanded, duration: 0.8)

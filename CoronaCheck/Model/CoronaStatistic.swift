@@ -18,6 +18,14 @@ struct CoronaStatistic {
     var activeOrRecovered: Int {
         return confirmed - deaths
     }
+    var yesterdayConfirmed: Int?
+    var yesterdayDeaths: Int?
+    var changeInConfirmed: Int? {
+        return confirmed - (yesterdayConfirmed ?? 0)
+    }
+    var changeInDeaths: Int? {
+        return deaths - (yesterdayDeaths ?? 0)
+    }
     var latitude: Double?
     var longitude: Double?
     

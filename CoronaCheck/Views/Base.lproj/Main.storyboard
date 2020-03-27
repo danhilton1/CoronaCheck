@@ -304,13 +304,23 @@
                                     <action selector="keyButtonTapped:" destination="xbp-Bc-fue" eventType="touchUpInside" id="Idd-QO-yM9"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kZr-Xx-Wgu">
+                                <rect key="frame" x="30" y="64" width="21" height="22"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <state key="normal" image="location.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="locationButtonTapped:" destination="xbp-Bc-fue" eventType="touchUpInside" id="br1-02-t9b"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="PXf-1s-hAR" firstAttribute="leading" secondItem="Hm3-rS-asi" secondAttribute="leading" id="BhF-uW-Xze"/>
                             <constraint firstItem="efc-hs-tU9" firstAttribute="top" secondItem="Hm3-rS-asi" secondAttribute="top" constant="10" id="OnE-3k-Q4C"/>
                             <constraint firstItem="PXf-1s-hAR" firstAttribute="top" secondItem="I0A-Pi-1iG" secondAttribute="top" id="Ssi-Qs-eyV"/>
+                            <constraint firstItem="kZr-Xx-Wgu" firstAttribute="top" secondItem="Hm3-rS-asi" secondAttribute="top" constant="20" id="da4-bm-mTO"/>
                             <constraint firstItem="Hm3-rS-asi" firstAttribute="trailing" secondItem="PXf-1s-hAR" secondAttribute="trailing" id="dea-Pc-5ab"/>
+                            <constraint firstItem="kZr-Xx-Wgu" firstAttribute="leading" secondItem="Hm3-rS-asi" secondAttribute="leading" constant="30" id="sPf-Fp-OUf"/>
                             <constraint firstItem="Hm3-rS-asi" firstAttribute="trailing" secondItem="efc-hs-tU9" secondAttribute="trailing" constant="20" id="tHC-Gm-ms5"/>
                             <constraint firstItem="Hm3-rS-asi" firstAttribute="bottom" secondItem="PXf-1s-hAR" secondAttribute="bottom" id="tR6-Lt-UtM"/>
                         </constraints>
@@ -331,6 +341,7 @@
         <image name="EarthImage" width="2401.5" height="2454"/>
         <image name="RefreshIcon" width="50" height="50"/>
         <image name="list.bullet" catalog="system" width="128" height="88"/>
+        <image name="location.fill" catalog="system" width="128" height="115"/>
         <image name="map" catalog="system" width="128" height="113"/>
     </resources>
 </document>
