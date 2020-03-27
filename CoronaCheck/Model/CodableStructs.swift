@@ -34,7 +34,7 @@ struct Location: Codable {
     let province: String
     let last_updated: String
     let coordinates: Coordinate
-    
+    let timelines: Timelines
 }
 
 struct Coordinate: Codable {

@@ -16,7 +16,7 @@ struct NetworkingServices {
 
         var url: URL
         if let country = code {
-            url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=\(country)")!
+            url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=\(country)&timelines=1")!
         }
         else {
             url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/latest")!
@@ -70,7 +70,7 @@ struct NetworkingServices {
     
     static func retrieveDateOfLastUpdate(completion: @escaping (String) -> ()) {
         
-        guard let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=GB") else { return }
+        guard let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=GB&timelines=1") else { return }
         
         let request = URLRequest(url: url)
         
@@ -96,7 +96,7 @@ struct NetworkingServices {
     
     static func downloadAllLocationData(completion: @escaping ([CoronaStatistic]) -> ()) {
         
-        guard let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations") else { return }
+        guard let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?timelines=1") else { return }
         
         let request = URLRequest(url: url)
         
@@ -110,44 +110,40 @@ struct NetworkingServices {
                 
                 let covidData = try JSONDecoder().decode(CoronaCountryData.self, from: data)
                 
-                let dispatchGroup = DispatchGroup()
-                
                 let locations = covidData.locations
+                
                 for location in locations {
-                    dispatchGroup.enter()
                     
                     let currentCases = location.latest.confirmed
                     let currentDeaths = location.latest.deaths
                     
-                    NetworkingServices.downloadTimelineData(countryID: location.id, currentCases: currentCases, currentDeaths: currentDeaths) { (cases, deaths) in
-                        
-                        statistic.yesterdayConfirmed = cases
-                        statistic.yesterdayDeaths = deaths
-                        statistic.country = location.country
-                        statistic.confirmed = currentCases
-                        statistic.deaths = currentDeaths
-                        
-                        statistic.latitude = Double(location.coordinates.latitude)
-                        statistic.longitude = Double(location.coordinates.longitude)
-                        if location.province == "" {
-                            statistic.province = location.country
-                        }
-                        else {
-                            statistic.province = location.province
-                        }
-                        if location.country == "United Kingdom" && location.province == "" {
-                            statistic.latitude = 52.9548
-                            statistic.longitude = -1.581
-                        }
-
-                        allStatistics.append(statistic)
-                        dispatchGroup.leave()
+                    statistic.country = location.country
+                    statistic.confirmed = currentCases
+                    statistic.deaths = currentDeaths
+                    
+                    statistic.latitude = Double(location.coordinates.latitude)
+                    statistic.longitude = Double(location.coordinates.longitude)
+                    if location.province == "" {
+                        statistic.province = location.country
                     }
-                }
-                dispatchGroup.notify(queue: .main) {
-                    completion(allStatistics)
+                    else {
+                        statistic.province = location.province
+                    }
+                    if location.country == "United Kingdom" && location.province == "" {
+                        statistic.latitude = 52.9548
+                        statistic.longitude = -1.581
+                    }
+                    let yesterdayCases = NetworkingServices.retrievePreviousDayData(timeline: location.timelines.confirmed.timeline, currentValue: currentCases)
+                    let yesterdayDeaths = NetworkingServices.retrievePreviousDayData(timeline: location.timelines.deaths.timeline, currentValue: currentDeaths)
+                    statistic.yesterdayConfirmed = yesterdayCases
+                    statistic.yesterdayDeaths = yesterdayDeaths
+
+                    allStatistics.append(statistic)
+                    
                 }
                 
+                
+                completion(allStatistics)
             }
             catch {
                 print(error)
@@ -155,55 +151,25 @@ struct NetworkingServices {
         }.resume()
     }
     
-    static func downloadTimelineData(countryID: Int, currentCases: Int, currentDeaths: Int, completion: @escaping (Int, Int) -> ()) {
+    
+    
+    static func retrievePreviousDayData(timeline: [String: Int], currentValue: Int) -> Int {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         
-        guard let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations/\(countryID)") else { return }
+        var dateDictionary = [Date: Int]()
         
-        let request = URLRequest(url: url)
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            
-            guard let data = data else { return }
-            
-            do {
-                let covidData = try JSONDecoder().decode(CoronaCountryIDData.self, from: data)
-                
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-                
-                var casesDictionary = [Date: Int]()
-                
-                for (key, value) in covidData.location.timelines.confirmed.timeline {
-                    let date = dateFormatter.date(from: key)
-                    casesDictionary[date!] = value
-                }
-                var sortedCases = casesDictionary.sorted { $0.0 < $1.0 }
-                var yesterdayConfirmed = sortedCases.last?.value ?? 0
-                if yesterdayConfirmed == currentCases {
-                    sortedCases = sortedCases.dropLast()
-                    yesterdayConfirmed = sortedCases.last?.value ?? 0
-                }
-                
-                var deathsDictionary = [Date: Int]()
-                
-                for (key, value) in covidData.location.timelines.deaths.timeline {
-                    let date = dateFormatter.date(from: key)
-                    deathsDictionary[date!] = value
-                }
-                var sortedDeaths = deathsDictionary.sorted { $0.0 < $1.0 }
-                var yesterdayDeaths = sortedDeaths.last?.value ?? 0
-                if yesterdayDeaths == currentDeaths {
-                    sortedDeaths = sortedDeaths.dropLast()
-                    yesterdayDeaths = sortedDeaths.last?.value ?? 0
-                }
-                 
-                completion(yesterdayConfirmed, yesterdayDeaths)
-                
-            }
-            catch {
-                
-            }
-        }.resume()
+        for (key, value) in timeline {
+            let date = dateFormatter.date(from: key)
+            dateDictionary[date!] = value
+        }
+        var sortedDictionary = dateDictionary.sorted { $0.0 < $1.0 }
+        var yesterdayValue = sortedDictionary.last?.value ?? 0
+        if yesterdayValue == currentValue {
+            sortedDictionary = sortedDictionary.dropLast()
+            yesterdayValue = sortedDictionary.last?.value ?? 0
+        }
+        return yesterdayValue
     }
     
     
