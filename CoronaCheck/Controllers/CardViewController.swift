@@ -38,11 +38,15 @@ class CardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setUpViews()
+        updateViewForUserInterfaceStyle()
+        
+    }
+    
+    func setUpViews() {
         lineView.backgroundColor = .secondaryLabel
         handleAreaView.backgroundColor = .systemGray4
         mainView.backgroundColor = .systemGray5
-        
-        updateViewForUserInterfaceStyle()
         
         casesBackgroundLabel.layer.masksToBounds = true
         deathsBackgroundLabel.layer.masksToBounds = true
@@ -62,8 +66,8 @@ class CardViewController: UIViewController {
         barChartView.xAxis.drawGridLinesEnabled = true
         barChartView.rightAxis.enabled = false
         barChartView.leftAxis.axisMinimum = 0
-        barChartView.xAxis.labelTextColor = .white
-        barChartView.leftAxis.labelTextColor = .white
+        barChartView.xAxis.labelTextColor = .label
+        barChartView.leftAxis.labelTextColor = .label
         barChartView.legend.enabled = false
     }
     
