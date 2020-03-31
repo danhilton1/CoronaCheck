@@ -72,6 +72,8 @@ class MapViewController: UIViewController {
     var casesAxisDates: [String]?
     var deathsAxisDates: [String]?
     
+    let numberFormatter = NumberFormatter()
+    
     //MARK:- viewDidLoad
     
     override func viewDidLoad() {
@@ -126,13 +128,16 @@ class MapViewController: UIViewController {
     }
     
     func setUpCardViewLabels() {
+        
+        numberFormatter.numberStyle = .decimal
+        
         cardViewController.countryLabel.text = "Worldwide"
         
         NetworkingServices.downloadData(forCountryCode: nil) { [weak self] (statistic) in
             DispatchQueue.main.async {
-                self?.cardViewController.casesLabel.text = "\(statistic.confirmed)"
-                self?.cardViewController.deathsLabel.text = "\(statistic.deaths)"
-                self?.cardViewController.recoveriesLabel.text = "\(statistic.activeOrRecovered)"
+                self?.cardViewController.casesLabel.text = self?.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
+                self?.cardViewController.deathsLabel.text = self?.numberFormatter.string(from: NSNumber(value: statistic.deaths))
+                self?.cardViewController.recoveriesLabel.text = self?.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
             }
         }
     }
@@ -142,9 +147,9 @@ class MapViewController: UIViewController {
         let changeInConfirmed = statistic.changeInConfirmed ?? 0
         let changeInDeaths = statistic.changeInDeaths ?? 0
         cardViewController.countryLabel.text = statistic.province
-        cardViewController.casesLabel.text = "\(statistic.confirmed)"
-        cardViewController.deathsLabel.text = "\(statistic.deaths)"
-        cardViewController.recoveriesLabel.text = "\(statistic.activeOrRecovered)"
+        cardViewController.casesLabel.text = numberFormatter.string(from: NSNumber(value: statistic.confirmed))
+        cardViewController.deathsLabel.text = numberFormatter.string(from: NSNumber(value: statistic.deaths))
+        cardViewController.recoveriesLabel.text = numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
         cardViewController.casesChangeLabel.text = "(+\(changeInConfirmed))*"
         cardViewController.deathsChangeLabel.text = "(+\(changeInDeaths))*"
         cardViewController.activeChangeLabel.text = "(+\(changeInConfirmed - changeInDeaths))*"
@@ -351,13 +356,13 @@ class MapViewController: UIViewController {
                 if let lat = statistic.latitude, let lon = statistic.longitude {
                     let annotation = MKPointAnnotation()
                     if detail == .cases {
-                        annotation.title = "\(statistic.confirmed)"
+                        annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
                     }
                     else if detail == .deaths {
-                        annotation.title = "\(statistic.deaths)"
+                        annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.deaths))
                     }
                     else {
-                        annotation.title = "\(statistic.activeOrRecovered)"
+                        annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
                     }
                     
                     annotation.subtitle = statistic.province

@@ -26,6 +26,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
     
     let inputFormatter = DateFormatter()
     let outputFormatter = DateFormatter()
+    let numberFormatter = NumberFormatter()
     
     var countryCode: String?
     var finishedDownloading = false
@@ -49,6 +50,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
         
         inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
         outputFormatter.dateFormat = "E, d MMM yyyy HH:mm:ss"
+        numberFormatter.numberStyle = .decimal
         
         confirmedBackgroundLabel.layer.masksToBounds = true
         deathsBackgroundLabel.layer.masksToBounds = true
@@ -106,9 +108,9 @@ class OverviewViewController: UIViewController, CountryDelegate {
                 self.refreshButton.layer.removeAllAnimations()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
-                    self.confirmedCasesNumberLabel.text = "\(corona.confirmed)"
-                    self.confirmedDeathsNumberLabel.text = "\(corona.deaths)"
-                    self.confirmedRecoveriesNumberLabel.text = "\(corona.activeOrRecovered)"
+                    self.confirmedCasesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: corona.confirmed))
+                    self.confirmedDeathsNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: corona.deaths))
+                    self.confirmedRecoveriesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: corona.activeOrRecovered))
                 }
                 NetworkingServices.retrieveDateOfLastUpdate { (date) in
                     let date = self.inputFormatter.date(from: date) ?? Date()
