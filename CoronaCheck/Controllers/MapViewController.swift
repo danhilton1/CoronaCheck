@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import CoreLocation
+import Charts
 
 class MapViewController: UIViewController {
 
@@ -66,6 +67,10 @@ class MapViewController: UIViewController {
     var animationProgressWhenInterrupted: CGFloat = 0
     
     var allStatistics: [CoronaStatistic]?
+    var casesChartData: BarChartData?
+    var deathsChartData: BarChartData?
+    var casesAxisDates: [String]?
+    var deathsAxisDates: [String]?
     
     //MARK:- viewDidLoad
     
@@ -105,6 +110,19 @@ class MapViewController: UIViewController {
         cardViewController.lineView.layer.cornerRadius = 3
         visualEffectView.alpha = 0
         
+        cardViewController.segmentedControl.addTarget(self, action: #selector(segmentDidChange), for: .valueChanged)
+        
+    }
+    
+    @objc func segmentDidChange(_ sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 0 {
+            cardViewController.barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: casesAxisDates!)
+            cardViewController.barChartView.data = casesChartData
+        }
+        else {
+            cardViewController.barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: deathsAxisDates!)
+            cardViewController.barChartView.data = deathsChartData
+        }
     }
     
     func setUpCardViewLabels() {
@@ -117,6 +135,55 @@ class MapViewController: UIViewController {
                 self?.cardViewController.recoveriesLabel.text = "\(statistic.activeOrRecovered)"
             }
         }
+    }
+    
+    func updateCardView(statistic: CoronaStatistic, timeline: Array<(key: Date, value: Int)>?, isDisplayingCases: Bool) {
+        
+        let changeInConfirmed = statistic.changeInConfirmed ?? 0
+        let changeInDeaths = statistic.changeInDeaths ?? 0
+        cardViewController.countryLabel.text = statistic.province
+        cardViewController.casesLabel.text = "\(statistic.confirmed)"
+        cardViewController.deathsLabel.text = "\(statistic.deaths)"
+        cardViewController.recoveriesLabel.text = "\(statistic.activeOrRecovered)"
+        cardViewController.casesChangeLabel.text = "(+\(changeInConfirmed))*"
+        cardViewController.deathsChangeLabel.text = "(+\(changeInDeaths))*"
+        cardViewController.activeChangeLabel.text = "(+\(changeInConfirmed - changeInDeaths))*"
+        
+        let chartDataSet = BarChartDataSet(entries: [BarChartDataEntry(x: 0, y: 0)])
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "d MMM"
+        var datesAsStrings = [String]()
+        var x = 0.0
+        
+        for entry in timeline! {
+            if entry.value > 0 {
+                chartDataSet.append(BarChartDataEntry(x: x, y: Double(entry.value)))
+                datesAsStrings.append(dateFormatter.string(from: entry.key))
+                x += 1
+            }
+        }
+        
+        cardViewController.barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: datesAsStrings)
+        
+        chartDataSet.drawValuesEnabled = false
+        chartDataSet.valueTextColor = .white
+        var chartData: BarChartData
+        
+        if isDisplayingCases {
+            casesAxisDates = datesAsStrings
+            chartDataSet.colors = [.systemOrange]
+            chartData = BarChartData(dataSet: chartDataSet)
+            casesChartData = chartData
+        }
+        else {
+            deathsAxisDates = datesAsStrings
+            chartDataSet.colors = [.systemRed]
+            chartData = BarChartData(dataSet: chartDataSet)
+            deathsChartData = chartData
+        }
+
+        cardViewController.barChartView.data = chartData
+        
     }
     
     
@@ -265,6 +332,16 @@ class MapViewController: UIViewController {
     }
     
     private func addAnnotations(forStatistic detail: StatisticDetail) {
+        
+        let activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        activityIndicator.style = .large
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(activityIndicator)
+        activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        activityIndicator.startAnimating()
+        
         var annontations = [MKPointAnnotation]()
         
         NetworkingServices.downloadAllLocationData { (statistics) in
@@ -289,6 +366,12 @@ class MapViewController: UIViewController {
                 }
             }
             self.mapView.addAnnotations(annontations)
+            
+            DispatchQueue.main.async {
+                activityIndicator.stopAnimating()
+                activityIndicator.removeFromSuperview()
+            }
+            
         }
     }
     
@@ -332,15 +415,10 @@ class MapViewController: UIViewController {
 
 extension MapViewController: CLLocationManagerDelegate {
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
-    }
-    
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedWhenInUse {
             checkLocationServices()
         }
-        
     }
     
 }
@@ -350,18 +428,15 @@ extension MapViewController: CLLocationManagerDelegate {
 extension MapViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideCardView), object: nil)
+        
         for statistic in allStatistics! {
             if statistic.province == view.annotation?.subtitle {
-                let changeInConfirmed = statistic.changeInConfirmed ?? 0
-                let changeInDeaths = statistic.changeInDeaths ?? 0
-                cardViewController.countryLabel.text = statistic.province
-                cardViewController.casesLabel.text = "\(statistic.confirmed)"
-                cardViewController.deathsLabel.text = "\(statistic.deaths)"
-                cardViewController.recoveriesLabel.text = "\(statistic.activeOrRecovered)"
-                cardViewController.casesChangeLabel.text = "(+\(changeInConfirmed))*"
-                cardViewController.deathsChangeLabel.text = "(+\(changeInDeaths))*"
-                cardViewController.activeChangeLabel.text = "(+\(changeInConfirmed - changeInDeaths))*"
+                
+                updateCardView(statistic: statistic, timeline: statistic.deathsTimeline, isDisplayingCases: false)
+                updateCardView(statistic: statistic, timeline: statistic.casesTimeline, isDisplayingCases: true)
+                break
             }
         }
         startInteractiveTransition(state: .partExpanded, duration: 0.8)

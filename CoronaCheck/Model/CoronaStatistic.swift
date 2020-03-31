@@ -18,6 +18,8 @@ struct CoronaStatistic {
     var activeOrRecovered: Int {
         return confirmed - deaths
     }
+    var casesTimeline: Array<(key: Date, value: Int)>?
+    var deathsTimeline: Array<(key: Date, value: Int)>?
     var yesterdayConfirmed: Int?
     var yesterdayDeaths: Int?
     var changeInConfirmed: Int? {

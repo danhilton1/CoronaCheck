@@ -10,6 +10,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CardViewController" customModule="CoronaCheck" customModuleProvider="target">
             <connections>
                 <outlet property="activeChangeLabel" destination="1Ca-01-tsj" id="zql-X9-2eH"/>
+                <outlet property="barChartView" destination="7vN-ce-DhM" id="wvK-Ca-QbD"/>
                 <outlet property="casesBackgroundLabel" destination="SLD-Pq-3WK" id="Brg-Do-DIP"/>
                 <outlet property="casesBackgroundView" destination="NP8-o9-7sb" id="Hld-zZ-zMn"/>
                 <outlet property="casesChangeLabel" destination="lsK-uq-JrW" id="Dot-6I-mey"/>
@@ -25,6 +26,7 @@
                 <outlet property="recoveriesBackgroundLabel" destination="ua5-XE-W1R" id="Fsd-Zx-YnG"/>
                 <outlet property="recoveriesBackgroundView" destination="RiW-Fk-geb" id="jW8-k7-t1W"/>
                 <outlet property="recoveriesLabel" destination="ja8-dR-Rkg" id="HOC-ue-WmY"/>
+                <outlet property="segmentedControl" destination="dff-on-xgp" id="C2C-5C-Sme"/>
                 <outlet property="view" destination="iN0-l3-epB" id="1RL-Eb-wPT"/>
             </connections>
         </placeholder>
@@ -208,17 +210,42 @@
                             <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="12"/>
                             <nil key="highlightedColor"/>
                         </label>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7vN-ce-DhM" customClass="BarChartView" customModule="Charts">
+                            <rect key="frame" x="30" y="336.5" width="354" height="360.5"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        </view>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timeline" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q47-Xe-siv">
+                            <rect key="frame" x="30" y="289" width="79" height="27.5"/>
+                            <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="dff-on-xgp">
+                            <rect key="frame" x="144.5" y="717" width="125" height="32"/>
+                            <segments>
+                                <segment title="Cases"/>
+                                <segment title="Deaths"/>
+                            </segments>
+                        </segmentedControl>
                     </subviews>
                     <color key="backgroundColor" systemColor="systemGrayColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
+                        <constraint firstItem="7vN-ce-DhM" firstAttribute="centerX" secondItem="bga-Cf-DPH" secondAttribute="centerX" id="0Kg-zA-DrY"/>
                         <constraint firstItem="flH-PR-WaH" firstAttribute="top" secondItem="bga-Cf-DPH" secondAttribute="top" constant="20" id="2Iz-f0-U5V"/>
+                        <constraint firstItem="dff-on-xgp" firstAttribute="centerX" secondItem="bga-Cf-DPH" secondAttribute="centerX" id="2SE-TT-ADs"/>
                         <constraint firstAttribute="trailing" secondItem="Lhi-Zl-Id2" secondAttribute="trailing" constant="30" id="35Y-c2-y0J"/>
+                        <constraint firstItem="7vN-ce-DhM" firstAttribute="leading" secondItem="bga-Cf-DPH" secondAttribute="leading" constant="30" id="7Y9-Da-agu"/>
+                        <constraint firstItem="dff-on-xgp" firstAttribute="top" secondItem="7vN-ce-DhM" secondAttribute="bottom" constant="20" id="9js-mD-UqX"/>
+                        <constraint firstItem="q47-Xe-siv" firstAttribute="top" secondItem="fLJ-9c-N7e" secondAttribute="bottom" constant="30" id="OLT-tj-43n"/>
                         <constraint firstItem="Lhi-Zl-Id2" firstAttribute="leading" secondItem="bga-Cf-DPH" secondAttribute="leading" constant="30" id="Rzm-B3-JtG"/>
                         <constraint firstItem="Lhi-Zl-Id2" firstAttribute="top" secondItem="flH-PR-WaH" secondAttribute="bottom" constant="30" id="SNa-b2-vxr"/>
+                        <constraint firstItem="q47-Xe-siv" firstAttribute="leading" secondItem="bga-Cf-DPH" secondAttribute="leading" constant="30" id="a8z-lj-Tw0"/>
+                        <constraint firstAttribute="trailing" secondItem="7vN-ce-DhM" secondAttribute="trailing" constant="30" id="b0e-cg-dqA"/>
                         <constraint firstItem="flH-PR-WaH" firstAttribute="centerX" secondItem="bga-Cf-DPH" secondAttribute="centerX" id="nln-oc-0w4"/>
                         <constraint firstItem="fLJ-9c-N7e" firstAttribute="leading" secondItem="bga-Cf-DPH" secondAttribute="leading" constant="30" id="nlp-9Y-Yrr"/>
                         <constraint firstItem="Lhi-Zl-Id2" firstAttribute="centerX" secondItem="bga-Cf-DPH" secondAttribute="centerX" id="onm-Zh-oWB"/>
                         <constraint firstItem="fLJ-9c-N7e" firstAttribute="top" secondItem="Lhi-Zl-Id2" secondAttribute="bottom" constant="5" id="qgE-xn-Mqp"/>
+                        <constraint firstAttribute="bottom" secondItem="dff-on-xgp" secondAttribute="bottom" constant="30" id="r6X-CF-CI4"/>
+                        <constraint firstItem="7vN-ce-DhM" firstAttribute="top" secondItem="q47-Xe-siv" secondAttribute="bottom" constant="20" id="sXt-C8-QsL"/>
                     </constraints>
                 </view>
             </subviews>

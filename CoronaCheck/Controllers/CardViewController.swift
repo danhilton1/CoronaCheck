@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import Charts
 
 class CardViewController: UIViewController {
 
+    //MARK:- IBOutlets
     
     @IBOutlet weak var handleAreaView: UIView!
     @IBOutlet weak var lineView: UIView!
@@ -27,7 +29,11 @@ class CardViewController: UIViewController {
     @IBOutlet weak var casesChangeLabel: UILabel!
     @IBOutlet weak var deathsChangeLabel: UILabel!
     @IBOutlet weak var activeChangeLabel: UILabel!
+    @IBOutlet weak var barChartView: BarChartView!
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
     
+    
+    //MARK:- View Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +51,20 @@ class CardViewController: UIViewController {
         casesBackgroundLabel.layer.cornerRadius = 18
         deathsBackgroundLabel.layer.cornerRadius = 18
         recoveriesBackgroundLabel.layer.cornerRadius = 18
+        
+        barChartView.highlightPerTapEnabled = false
+        barChartView.highlightPerDragEnabled = false
+        barChartView.leftAxis.drawAxisLineEnabled = true
+        barChartView.leftAxis.drawGridLinesEnabled = false
+        barChartView.xAxis.labelPosition = .bottom
+        barChartView.xAxis.centerAxisLabelsEnabled = true
+        barChartView.xAxis.drawAxisLineEnabled = true
+        barChartView.xAxis.drawGridLinesEnabled = true
+        barChartView.rightAxis.enabled = false
+        barChartView.leftAxis.axisMinimum = 0
+        barChartView.xAxis.labelTextColor = .white
+        barChartView.leftAxis.labelTextColor = .white
+        barChartView.legend.enabled = false
     }
     
     func updateViewForUserInterfaceStyle() {

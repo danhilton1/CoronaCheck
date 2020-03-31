@@ -123,28 +123,46 @@ struct NetworkingServices {
                     
                     statistic.latitude = Double(location.coordinates.latitude)
                     statistic.longitude = Double(location.coordinates.longitude)
+                    if location.country == "United Kingdom" && location.province == "" {
+                        statistic.latitude = 52.9548
+                        statistic.longitude = -1.581
+                    }
+                    
                     if location.province == "" {
                         statistic.province = location.country
                     }
                     else {
                         statistic.province = location.province
                     }
-                    if location.country == "United Kingdom" && location.province == "" {
-                        statistic.latitude = 52.9548
-                        statistic.longitude = -1.581
+                    
+                    var casesDict = NetworkingServices.retrieveTimelineData(timeline: location.timelines.confirmed.timeline)
+                    statistic.casesTimeline = casesDict
+                    
+                    var yesterdayCases = casesDict.last?.value ?? 0
+                    if yesterdayCases == currentCases {
+                        casesDict = casesDict.dropLast()
+                        yesterdayCases = casesDict.last?.value ?? 0
                     }
-                    let yesterdayCases = NetworkingServices.retrievePreviousDayData(timeline: location.timelines.confirmed.timeline, currentValue: currentCases)
-                    let yesterdayDeaths = NetworkingServices.retrievePreviousDayData(timeline: location.timelines.deaths.timeline, currentValue: currentDeaths)
                     statistic.yesterdayConfirmed = yesterdayCases
+                    
+                    var deathsDict = NetworkingServices.retrieveTimelineData(timeline: location.timelines.deaths.timeline)
+                    statistic.deathsTimeline = deathsDict
+                    
+                    var yesterdayDeaths = deathsDict.last?.value ?? 0
+                    if yesterdayDeaths == currentDeaths {
+                        deathsDict = deathsDict.dropLast()
+                        yesterdayDeaths = deathsDict.last?.value ?? 0
+                    }
                     statistic.yesterdayDeaths = yesterdayDeaths
+                    
+                    
 
                     allStatistics.append(statistic)
                     
                 }
-                
-                
                 completion(allStatistics)
             }
+                
             catch {
                 print(error)
             }   
@@ -153,7 +171,7 @@ struct NetworkingServices {
     
     
     
-    static func retrievePreviousDayData(timeline: [String: Int], currentValue: Int) -> Int {
+    static func retrieveTimelineData(timeline: [String: Int]) -> Array<(key: Date, value: Int)> {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         
@@ -163,13 +181,9 @@ struct NetworkingServices {
             let date = dateFormatter.date(from: key)
             dateDictionary[date!] = value
         }
-        var sortedDictionary = dateDictionary.sorted { $0.0 < $1.0 }
-        var yesterdayValue = sortedDictionary.last?.value ?? 0
-        if yesterdayValue == currentValue {
-            sortedDictionary = sortedDictionary.dropLast()
-            yesterdayValue = sortedDictionary.last?.value ?? 0
-        }
-        return yesterdayValue
+        let sortedList = dateDictionary.sorted { $0.0 < $1.0 }
+        
+        return sortedList
     }
     
     
