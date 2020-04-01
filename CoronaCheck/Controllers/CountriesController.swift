@@ -117,7 +117,19 @@ extension CountriesController: UICollectionViewDelegateFlowLayout, UISearchBarDe
     //MARK: CollectionView Layout
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 120, height: 130)
+        
+        if UIScreen.main.bounds.height < 600 {
+            return CGSize(width: 80, height: 90)
+        }
+        else if UIScreen.main.bounds.height < 700 {
+            return CGSize(width: 90, height: 100)
+        }
+        else if UIScreen.main.bounds.height < 850 {
+            return CGSize(width: 100, height: 110)
+        }
+        else {
+            return CGSize(width: 120, height: 130)
+        }
     }
     
     // MARK: UICollectionViewDelegate

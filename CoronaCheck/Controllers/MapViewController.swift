@@ -91,7 +91,12 @@ class MapViewController: UIViewController {
     
     func setUpCard() {
         
-        cardHeight = self.view.frame.height - 100
+        if UIScreen.main.bounds.height < 800 {
+            cardHeight = self.view.frame.height - 50
+        }
+        else {
+            cardHeight = self.view.frame.height - 100
+        }
         
         visualEffectView = UIVisualEffectView()
         visualEffectView.frame = self.view.frame
@@ -122,11 +127,11 @@ class MapViewController: UIViewController {
         cardViewController.selectedValueLabel.text = ""
         
         if sender.selectedSegmentIndex == 0 {
-            cardViewController.barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: casesAxisDates!)
+            cardViewController.barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: casesAxisDates ?? [])
             cardViewController.barChartView.data = casesChartData
         }
         else {
-            cardViewController.barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: deathsAxisDates!)
+            cardViewController.barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: deathsAxisDates ?? [])
             cardViewController.barChartView.data = deathsChartData
         }
     }
@@ -231,7 +236,20 @@ class MapViewController: UIViewController {
             let frameAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
                 switch state {
                 case .partExpanded:
-                    self.cardViewController.view.frame.origin.y = self.view.frame.height - (self.cardHeight - 400)
+                    
+                    if UIScreen.main.bounds.height < 600 {
+                        self.cardViewController.view.frame.origin.y = self.view.frame.height - (self.cardHeight - 230)
+                    }
+                    else if UIScreen.main.bounds.height < 700 {
+                        self.cardViewController.view.frame.origin.y = self.view.frame.height - (self.cardHeight - 270)
+                    }
+                    else if UIScreen.main.bounds.height < 850 {
+                        self.cardViewController.view.frame.origin.y = self.view.frame.height - (self.cardHeight - 330)
+                    }
+                    else {
+                        self.cardViewController.view.frame.origin.y = self.view.frame.height - (self.cardHeight - 400)
+                    }
+                    
                 case .fullExpanded:
                     self.cardViewController.view.frame.origin.y = self.view.frame.height - self.cardHeight
                 case .collapsed:

@@ -12,17 +12,39 @@ import FlagKit
 class OverviewViewController: UIViewController, CountryDelegate {
 
     //IBOutlets
+    @IBOutlet weak var appTitleLabel: UILabel!
     @IBOutlet weak var locationImageView: UIImageView!
     @IBOutlet weak var overviewTitleLabel: UILabel!
-    @IBOutlet weak var confirmedBackgroundLabel: UILabel!
+
+    @IBOutlet weak var stackView: UIStackView!
+    @IBOutlet weak var casesView: UIView!
+    @IBOutlet weak var casesTextLabel: UILabel!
     @IBOutlet weak var confirmedCasesNumberLabel: UILabel!
-    @IBOutlet weak var deathsBackgroundLabel: UILabel!
+
+    @IBOutlet weak var deathsView: UIView!
+    @IBOutlet weak var deathsTextLabel: UILabel!
     @IBOutlet weak var confirmedDeathsNumberLabel: UILabel!
-    @IBOutlet weak var recoveriesBackgroundLabel: UILabel!
+
+    @IBOutlet weak var activesView: UIView!
+    @IBOutlet weak var activeTextLabel: UILabel!
     @IBOutlet weak var confirmedRecoveriesNumberLabel: UILabel!
+    
+    @IBOutlet weak var lastUpdatedTextLabel: UILabel!
     @IBOutlet weak var lastUpdatedLabel: UILabel!
     @IBOutlet weak var refreshButton: UIButton!
     @IBOutlet weak var countriesButton: UIButton!
+    
+    // Constraints
+    @IBOutlet weak var appTitleLabelTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var imageViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var countryLabelTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var countryLabelBottonConstraint: NSLayoutConstraint!
+    @IBOutlet weak var stackViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var countriesButtonTopConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var countriesButtonWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var countriesButtonHeightConstraint: NSLayoutConstraint!
     
     let inputFormatter = DateFormatter()
     let outputFormatter = DateFormatter()
@@ -38,6 +60,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
         
         animateNumbersInLabels()
         setUpViews()
+        checkDeviceAndUpdateConstraintsIfNeeded()
         
     }
     
@@ -52,12 +75,9 @@ class OverviewViewController: UIViewController, CountryDelegate {
         outputFormatter.dateFormat = "E, d MMM yyyy HH:mm:ss"
         numberFormatter.numberStyle = .decimal
         
-        confirmedBackgroundLabel.layer.masksToBounds = true
-        deathsBackgroundLabel.layer.masksToBounds = true
-        recoveriesBackgroundLabel.layer.masksToBounds = true
-        confirmedBackgroundLabel.layer.cornerRadius = 18
-        deathsBackgroundLabel.layer.cornerRadius = 18
-        recoveriesBackgroundLabel.layer.cornerRadius = 18
+        casesView.layer.cornerRadius = 18
+        deathsView.layer.cornerRadius = 18
+        activesView.layer.cornerRadius = 18
         countriesButton.layer.cornerRadius = 25
         
         refreshButton.rotate(duration: 1)
@@ -76,6 +96,53 @@ class OverviewViewController: UIViewController, CountryDelegate {
                 countriesButton.setTitleColor(.white, for: .normal)
                 refreshButton.imageView?.tintColor = .black
             }
+    }
+    
+    func checkDeviceAndUpdateConstraintsIfNeeded() {
+        
+        if UIScreen.main.bounds.height < 700 {
+            if UIScreen.main.bounds.height < 600 {
+                stackView.heightAnchor.constraint(equalToConstant: 180).isActive = true
+                appTitleLabel.font = appTitleLabel.font.withSize(30)
+                overviewTitleLabel.font = overviewTitleLabel.font.withSize(20)
+                casesTextLabel.font = casesTextLabel.font.withSize(18)
+                confirmedCasesNumberLabel.font = confirmedCasesNumberLabel.font.withSize(18)
+                deathsTextLabel.font = deathsTextLabel.font.withSize(18)
+                confirmedDeathsNumberLabel.font = confirmedDeathsNumberLabel.font.withSize(18)
+                activeTextLabel.font = confirmedDeathsNumberLabel.font.withSize(18)
+                confirmedRecoveriesNumberLabel.font = confirmedRecoveriesNumberLabel.font.withSize(18)
+                
+                appTitleLabelTopConstraint.constant = 15
+                countryLabelTopConstraint.constant = 10
+                stackViewBottomConstraint.constant = 10
+                countriesButtonTopConstraint.constant = 10
+                countriesButtonHeightConstraint.constant = 39
+                countriesButton.layer.cornerRadius = 20
+                
+                stackView.spacing = 8
+            }
+            imageViewWidthConstraint.constant = 40
+            imageViewHeightConstraint.constant = 40
+            countryLabelTopConstraint.constant = 10
+            stackViewBottomConstraint.constant = 20
+            countriesButtonTopConstraint.constant = 30
+            
+            appTitleLabel.font = appTitleLabel.font.withSize(32)
+            overviewTitleLabel.font = overviewTitleLabel.font.withSize(24)
+            lastUpdatedTextLabel.font = lastUpdatedTextLabel.font.withSize(16)
+            lastUpdatedLabel.font = lastUpdatedLabel.font.withSize(14.5)
+            
+            stackView.heightAnchor.constraint(equalToConstant: 230).isActive = true
+        }
+        else if UIScreen.main.bounds.height < 850 {
+            appTitleLabel.font = appTitleLabel.font.withSize(36)
+            overviewTitleLabel.font = overviewTitleLabel.font.withSize(26)
+            
+            countryLabelTopConstraint.constant = 15
+            imageViewWidthConstraint.constant = 60
+            imageViewHeightConstraint.constant = 60
+            stackViewBottomConstraint.constant = 25
+        }
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

@@ -16,6 +16,7 @@ class CardViewController: UIViewController {
     @IBOutlet weak var handleAreaView: UIView!
     @IBOutlet weak var lineView: UIView!
     @IBOutlet weak var mainView: UIView!
+    @IBOutlet weak var mainStackView: UIStackView!
     @IBOutlet weak var countryLabel: UILabel!
     @IBOutlet weak var casesBackgroundView: UIView!
     @IBOutlet weak var deathsBackgroundView: UIView!
@@ -33,6 +34,10 @@ class CardViewController: UIViewController {
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var selectedValueLabel: UILabel!
     
+    @IBOutlet weak var stackViewTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var barChartTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var segmentedControlTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var segmentedControlBottomConstraint: NSLayoutConstraint!
     
     //MARK:- View Methods
     
@@ -41,6 +46,7 @@ class CardViewController: UIViewController {
 
         setUpViews()
         updateViewForUserInterfaceStyle()
+        checkDeviceSizeAndUpdateConstraints()
         
     }
     
@@ -72,6 +78,24 @@ class CardViewController: UIViewController {
         barChartView.legend.enabled = false
         
         selectedValueLabel.textColor = .secondaryLabel
+    }
+    
+    func checkDeviceSizeAndUpdateConstraints() {
+        if UIScreen.main.bounds.height < 600 {
+            mainStackView.spacing = 15
+            stackViewTopConstraint.constant = 10
+            mainStackView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+            barChartTopConstraint.constant = 5
+            segmentedControlTopConstraint.constant = 10
+            segmentedControlBottomConstraint.constant = 15
+            
+            casesLabel.font = casesLabel.font.withSize(16)
+            deathsLabel.font = deathsLabel.font.withSize(16)
+            recoveriesLabel.font = recoveriesLabel.font.withSize(16)
+            casesChangeLabel.font = casesChangeLabel.font.withSize(12)
+            deathsChangeLabel.font = deathsChangeLabel.font.withSize(12)
+            activeChangeLabel.font = activeChangeLabel.font.withSize(12)
+        }
     }
     
     func updateViewForUserInterfaceStyle() {
