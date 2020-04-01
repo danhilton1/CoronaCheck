@@ -27,6 +27,7 @@
                 <outlet property="recoveriesBackgroundView" destination="RiW-Fk-geb" id="jW8-k7-t1W"/>
                 <outlet property="recoveriesLabel" destination="ja8-dR-Rkg" id="HOC-ue-WmY"/>
                 <outlet property="segmentedControl" destination="dff-on-xgp" id="C2C-5C-Sme"/>
+                <outlet property="selectedValueLabel" destination="Ltf-Tb-fLI" id="NJ3-2c-1eR"/>
                 <outlet property="view" destination="iN0-l3-epB" id="1RL-Eb-wPT"/>
             </connections>
         </placeholder>
@@ -214,8 +215,8 @@
                             <rect key="frame" x="30" y="336.5" width="354" height="360.5"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         </view>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timeline" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q47-Xe-siv">
-                            <rect key="frame" x="30" y="289" width="79" height="27.5"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timeline" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q47-Xe-siv">
+                            <rect key="frame" x="30" y="289" width="334" height="27.5"/>
                             <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                             <nil key="highlightedColor"/>
                         </label>
@@ -226,10 +227,16 @@
                                 <segment title="Deaths"/>
                             </segments>
                         </segmentedControl>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ltf-Tb-fLI">
+                            <rect key="frame" x="384" y="303" width="0.0" height="0.0"/>
+                            <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="16"/>
+                            <nil key="highlightedColor"/>
+                        </label>
                     </subviews>
                     <color key="backgroundColor" systemColor="systemGrayColor" red="0.5568627451" green="0.5568627451" blue="0.57647058819999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstItem="7vN-ce-DhM" firstAttribute="centerX" secondItem="bga-Cf-DPH" secondAttribute="centerX" id="0Kg-zA-DrY"/>
+                        <constraint firstAttribute="trailing" secondItem="Ltf-Tb-fLI" secondAttribute="trailing" constant="30" id="0ap-C9-AH2"/>
                         <constraint firstItem="flH-PR-WaH" firstAttribute="top" secondItem="bga-Cf-DPH" secondAttribute="top" constant="20" id="2Iz-f0-U5V"/>
                         <constraint firstItem="dff-on-xgp" firstAttribute="centerX" secondItem="bga-Cf-DPH" secondAttribute="centerX" id="2SE-TT-ADs"/>
                         <constraint firstAttribute="trailing" secondItem="Lhi-Zl-Id2" secondAttribute="trailing" constant="30" id="35Y-c2-y0J"/>
@@ -238,8 +245,10 @@
                         <constraint firstItem="q47-Xe-siv" firstAttribute="top" secondItem="fLJ-9c-N7e" secondAttribute="bottom" constant="30" id="OLT-tj-43n"/>
                         <constraint firstItem="Lhi-Zl-Id2" firstAttribute="leading" secondItem="bga-Cf-DPH" secondAttribute="leading" constant="30" id="Rzm-B3-JtG"/>
                         <constraint firstItem="Lhi-Zl-Id2" firstAttribute="top" secondItem="flH-PR-WaH" secondAttribute="bottom" constant="30" id="SNa-b2-vxr"/>
+                        <constraint firstItem="Ltf-Tb-fLI" firstAttribute="centerY" secondItem="q47-Xe-siv" secondAttribute="centerY" id="VYb-R4-kAE"/>
                         <constraint firstItem="q47-Xe-siv" firstAttribute="leading" secondItem="bga-Cf-DPH" secondAttribute="leading" constant="30" id="a8z-lj-Tw0"/>
                         <constraint firstAttribute="trailing" secondItem="7vN-ce-DhM" secondAttribute="trailing" constant="30" id="b0e-cg-dqA"/>
+                        <constraint firstItem="Ltf-Tb-fLI" firstAttribute="leading" secondItem="q47-Xe-siv" secondAttribute="trailing" constant="20" id="mVx-Mz-6Av"/>
                         <constraint firstItem="flH-PR-WaH" firstAttribute="centerX" secondItem="bga-Cf-DPH" secondAttribute="centerX" id="nln-oc-0w4"/>
                         <constraint firstItem="fLJ-9c-N7e" firstAttribute="leading" secondItem="bga-Cf-DPH" secondAttribute="leading" constant="30" id="nlp-9Y-Yrr"/>
                         <constraint firstItem="Lhi-Zl-Id2" firstAttribute="centerX" secondItem="bga-Cf-DPH" secondAttribute="centerX" id="onm-Zh-oWB"/>

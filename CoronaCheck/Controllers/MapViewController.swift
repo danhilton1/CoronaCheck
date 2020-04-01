@@ -83,6 +83,7 @@ class MapViewController: UIViewController {
         setUpCardViewLabels()
         checkLocationServices()
         addAnnotations(forStatistic: .cases)
+        cardViewController.barChartView.delegate = self
         
     }
     
@@ -117,6 +118,9 @@ class MapViewController: UIViewController {
     }
     
     @objc func segmentDidChange(_ sender: UISegmentedControl) {
+        cardViewController.barChartView.highlightValues(nil)
+        cardViewController.selectedValueLabel.text = ""
+        
         if sender.selectedSegmentIndex == 0 {
             cardViewController.barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: casesAxisDates!)
             cardViewController.barChartView.data = casesChartData
@@ -150,9 +154,9 @@ class MapViewController: UIViewController {
         cardViewController.casesLabel.text = numberFormatter.string(from: NSNumber(value: statistic.confirmed))
         cardViewController.deathsLabel.text = numberFormatter.string(from: NSNumber(value: statistic.deaths))
         cardViewController.recoveriesLabel.text = numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
-        cardViewController.casesChangeLabel.text = "(+\(changeInConfirmed))*"
-        cardViewController.deathsChangeLabel.text = "(+\(changeInDeaths))*"
-        cardViewController.activeChangeLabel.text = "(+\(changeInConfirmed - changeInDeaths))*"
+        cardViewController.casesChangeLabel.text = "(+\(numberFormatter.string(from: NSNumber(value: changeInConfirmed))!))*"
+        cardViewController.deathsChangeLabel.text = "(+\(numberFormatter.string(from: NSNumber(value: changeInDeaths))!))*"
+        cardViewController.activeChangeLabel.text = "(+\(numberFormatter.string(from: NSNumber(value: (changeInConfirmed - changeInDeaths)))!))*"
         
         let chartDataSet = BarChartDataSet(entries: [BarChartDataEntry(x: 0, y: 0)])
         let dateFormatter = DateFormatter()
@@ -455,5 +459,23 @@ extension MapViewController: MKMapViewDelegate {
     @objc func hideCardView() {
         startInteractiveTransition(state: .collapsed, duration: 0.9)
         continueInteractiveTransition()
+    }
+}
+
+extension MapViewController: ChartViewDelegate {
+    func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+        
+        if cardViewController.segmentedControl.selectedSegmentIndex == 0 {
+            let dateString = casesAxisDates?[Int(entry.x)] ?? ""
+                cardViewController.selectedValueLabel.text = "\(dateString):  \(numberFormatter.string(from: NSNumber(value: entry.y))!) cases"
+        }
+        else {
+            let dateString = deathsAxisDates?[Int(entry.x)] ?? ""
+                cardViewController.selectedValueLabel.text = "\(dateString):  \(numberFormatter.string(from: NSNumber(value: entry.y))!) deaths"
+        }
+    }
+    
+    func chartValueNothingSelected(_ chartView: ChartViewBase) {
+        cardViewController.selectedValueLabel.text = ""
     }
 }

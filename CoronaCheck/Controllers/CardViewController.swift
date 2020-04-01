@@ -31,6 +31,7 @@ class CardViewController: UIViewController {
     @IBOutlet weak var activeChangeLabel: UILabel!
     @IBOutlet weak var barChartView: BarChartView!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
+    @IBOutlet weak var selectedValueLabel: UILabel!
     
     
     //MARK:- View Methods
@@ -56,7 +57,7 @@ class CardViewController: UIViewController {
         deathsBackgroundLabel.layer.cornerRadius = 18
         recoveriesBackgroundLabel.layer.cornerRadius = 18
         
-        barChartView.highlightPerTapEnabled = false
+//        barChartView.highlightPerTapEnabled = false
         barChartView.highlightPerDragEnabled = false
         barChartView.leftAxis.drawAxisLineEnabled = true
         barChartView.leftAxis.drawGridLinesEnabled = false
@@ -69,6 +70,8 @@ class CardViewController: UIViewController {
         barChartView.xAxis.labelTextColor = .label
         barChartView.leftAxis.labelTextColor = .label
         barChartView.legend.enabled = false
+        
+        selectedValueLabel.textColor = .secondaryLabel
     }
     
     func updateViewForUserInterfaceStyle() {
