@@ -22,6 +22,7 @@ class CountryCell: UICollectionViewCell {
     }
 
     func configure(with country: Country) {
-        
+        countryImageView.image = country.flagImage
+        countryLabel.text = country.name
     }
 }

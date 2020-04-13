@@ -198,7 +198,6 @@
 				37B030A42420236A00A34E16 /* OverviewViewController.swift */,
 				377A7F5D2422922900E0EC36 /* CountriesController.swift */,
 				37F634C92427A2F400A96E7B /* MapViewController.swift */,
-				379B238A242A751F00C305DC /* CardViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -212,6 +211,7 @@
 				37F6398D2422BD9C0060F40C /* CountryCell.xib */,
 				379B2388242A74FF00C305DC /* CardView.xib */,
 				3796C47F242B9C27009F5FD1 /* CardView.swift */,
+				379B238A242A751F00C305DC /* CardViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";

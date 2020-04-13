@@ -269,7 +269,7 @@
                                 </collectionViewFlowLayout>
                                 <cells/>
                             </collectionView>
-                            <searchBar contentMode="redraw" searchBarStyle="minimal" placeholder="Search for a country" showsCancelButton="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wIF-0A-ZC4">
+                            <searchBar contentMode="redraw" searchBarStyle="minimal" placeholder="Search for a country" translatesAutoresizingMaskIntoConstraints="NO" id="wIF-0A-ZC4">
                                 <rect key="frame" x="0.0" y="81" width="414" height="56"/>
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>

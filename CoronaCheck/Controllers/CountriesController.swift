@@ -24,13 +24,14 @@ class CountriesController: UIViewController {
     
     var delegate: CountryDelegate?
     
-    var countries: [Country]?
+    var countries: [Country] = []
     
-    //MARK:- View Methodcs
+    //MARK:- View Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setUpView()
         populateCountriesArray()
         
         collectionView.register(UINib(nibName: "CountryCell", bundle: nil), forCellWithReuseIdentifier: "Cell")
@@ -38,13 +39,11 @@ class CountriesController: UIViewController {
         searchBar.delegate = self
         
         configureCollectionViewDataSource()
-        createSnapshot(from: countries!)
         
-        setUpView()
-          
     }
     
-    func setUpView() {
+    
+    private func setUpView() {
         if traitCollection.userInterfaceStyle == .dark {
             view.backgroundColor = .systemGray6
             collectionView.backgroundColor = .systemGray6
@@ -55,8 +54,8 @@ class CountriesController: UIViewController {
         }
     }
     
+    
     func populateCountriesArray() {
-        
         countries = [Country]()
         
         for code in NSLocale.isoCountryCodes  {
@@ -67,12 +66,14 @@ class CountriesController: UIViewController {
                 let flag = Flag(countryCode: code)
                 if let confirmedFlag = flag {
                     let flagImage = confirmedFlag.image(style: .circle)
-                    countries?.append(Country(name: name, code: code, flagImage: flagImage))
+                    countries.append(Country(name: name, code: code, flagImage: flagImage))
                 }
             }
         }
-        countries = countries?.sorted { $0.name < $1.name }
-        countries?.insert(Country(name: "Worldwide", code: nil, flagImage: UIImage(named: "EarthImage")!), at: 0)
+        countries = countries.sorted { $0.name < $1.name }
+        countries.insert(Country(name: "Worldwide", code: nil, flagImage: UIImage(named: "EarthImage")!), at: 0)
+        
+//        createSnapshot(from: countries)
     }
     
     
@@ -92,23 +93,22 @@ extension CountriesController: UICollectionViewDelegateFlowLayout, UISearchBarDe
     
     
     private func configureCollectionViewDataSource() {
-        
         dataSource = DataSource(collectionView: collectionView, cellProvider: { (collectionView, indexPath, country) -> CountryCell? in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! CountryCell
             
-            cell.countryImageView.image = country.flagImage
-            cell.countryLabel.text = country.name
+            cell.configure(with: country)
             
             return cell
         })
         
+        createSnapshot(from: countries)
     }
     
     private func createSnapshot(from countries: [Country]) {
-        
         snapshot = DataSourceSnapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(countries)
+        
         dataSource.apply(snapshot, animatingDifferences: true)
         
     }
@@ -118,44 +118,49 @@ extension CountriesController: UICollectionViewDelegateFlowLayout, UISearchBarDe
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        if UIScreen.main.bounds.height < 600 {
-            return CGSize(width: 80, height: 90)
-        }
-        else if UIScreen.main.bounds.height < 700 {
-            return CGSize(width: 90, height: 100)
-        }
-        else if UIScreen.main.bounds.height < 850 {
-            return CGSize(width: 100, height: 110)
-        }
-        else {
-            return CGSize(width: 120, height: 130)
-        }
+        let width = view.bounds.width
+        let padding: CGFloat = 12
+        let minimumItemSpacing: CGFloat = 10
+        let availableWidth = width - (padding * 2) - (minimumItemSpacing * 2)
+        let itemWidth = availableWidth / 3
+        let itemSize = CGSize(width: itemWidth, height: itemWidth + 20)
+
+        return itemSize
     }
     
     // MARK: UICollectionViewDelegate
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         guard let country = dataSource.itemIdentifier(for: indexPath) else { return }
         delegate?.loadDataFromCountry(country: country)
 
         self.dismiss(animated: true)
     }
     
+    
+    
     // MARK: SearchBar Delegate
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         let filteredCountries: [Country]
         if !searchText.isEmpty {
-            filteredCountries = countries!.filter { $0.name.contains(searchText) }
+            filteredCountries = countries.filter { $0.name.contains(searchText) }
         } else {
-            filteredCountries = countries!
+            filteredCountries = countries
         }
         createSnapshot(from: filteredCountries)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.showsCancelButton = true
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
     }
 
 }
