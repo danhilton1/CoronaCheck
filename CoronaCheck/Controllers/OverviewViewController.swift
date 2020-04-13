@@ -60,6 +60,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
         
         animateNumbersInLabels()
         setUpViews()
+        downloadData(countryCode: countryCode)
         checkDeviceAndUpdateConstraintsIfNeeded()
         
     }
@@ -81,86 +82,9 @@ class OverviewViewController: UIViewController, CountryDelegate {
         countriesButton.layer.cornerRadius = 25
         
         refreshButton.rotate(duration: 1)
-        
-        downloadData(countryCode: countryCode)
     }
     
-    func updateViewForUserInterfaceStyle() {
-            if traitCollection.userInterfaceStyle == .dark {
-                view.backgroundColor = .systemGray6
-                countriesButton.setTitleColor(.black, for: .normal)
-                refreshButton.imageView?.tintColor = .white
-            }
-            else {
-                view.backgroundColor = .white
-                countriesButton.setTitleColor(.white, for: .normal)
-                refreshButton.imageView?.tintColor = .black
-            }
-    }
     
-    func checkDeviceAndUpdateConstraintsIfNeeded() {
-        
-        if UIScreen.main.bounds.height < 700 {
-            if UIScreen.main.bounds.height < 600 {
-                stackView.heightAnchor.constraint(equalToConstant: 180).isActive = true
-                appTitleLabel.font = appTitleLabel.font.withSize(30)
-                overviewTitleLabel.font = overviewTitleLabel.font.withSize(20)
-                casesTextLabel.font = casesTextLabel.font.withSize(18)
-                confirmedCasesNumberLabel.font = confirmedCasesNumberLabel.font.withSize(18)
-                deathsTextLabel.font = deathsTextLabel.font.withSize(18)
-                confirmedDeathsNumberLabel.font = confirmedDeathsNumberLabel.font.withSize(18)
-                activeTextLabel.font = confirmedDeathsNumberLabel.font.withSize(18)
-                confirmedRecoveriesNumberLabel.font = confirmedRecoveriesNumberLabel.font.withSize(18)
-                
-                appTitleLabelTopConstraint.constant = 15
-                countryLabelTopConstraint.constant = 10
-                stackViewBottomConstraint.constant = 10
-                countriesButtonTopConstraint.constant = 10
-                countriesButtonHeightConstraint.constant = 39
-                countriesButton.layer.cornerRadius = 20
-                
-                stackView.spacing = 8
-            }
-            imageViewWidthConstraint.constant = 40
-            imageViewHeightConstraint.constant = 40
-            countryLabelTopConstraint.constant = 10
-            stackViewBottomConstraint.constant = 20
-            countriesButtonTopConstraint.constant = 30
-            
-            appTitleLabel.font = appTitleLabel.font.withSize(32)
-            overviewTitleLabel.font = overviewTitleLabel.font.withSize(24)
-            lastUpdatedTextLabel.font = lastUpdatedTextLabel.font.withSize(16)
-            lastUpdatedLabel.font = lastUpdatedLabel.font.withSize(14.5)
-            
-            stackView.heightAnchor.constraint(equalToConstant: 230).isActive = true
-        }
-        else if UIScreen.main.bounds.height < 850 {
-            appTitleLabel.font = appTitleLabel.font.withSize(36)
-            overviewTitleLabel.font = overviewTitleLabel.font.withSize(26)
-            
-            countryLabelTopConstraint.constant = 15
-            imageViewWidthConstraint.constant = 60
-            imageViewHeightConstraint.constant = 60
-            stackViewBottomConstraint.constant = 25
-        }
-    }
-    
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        updateViewForUserInterfaceStyle()
-    }
-    
-    func animateNumbersInLabels() {
-        DispatchQueue.global(qos: .background).async {
-            while !self.finishedDownloading {
-                DispatchQueue.main.async {
-                    self.confirmedCasesNumberLabel.text = "\(Int.random(in: 10000...500000))"
-                    self.confirmedDeathsNumberLabel.text = "\(Int.random(in: 1000...50000))"
-                    self.confirmedRecoveriesNumberLabel.text = "\(Int.random(in: 1000...300000))"
-                }
-                usleep(1000)
-            }
-        }
-    }
     
     //MARK:- Data Methods
     
@@ -169,9 +93,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
         NetworkingServices.downloadData(forCountryCode: countryCode) { (corona) in
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                
                 self.finishedDownloading = true
-                
                 self.refreshButton.layer.removeAllAnimations()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
@@ -220,6 +142,88 @@ class OverviewViewController: UIViewController, CountryDelegate {
         }
     }
     
+    
+    //MARK:- UI Methods
+    
+    func updateViewForUserInterfaceStyle() {
+            if traitCollection.userInterfaceStyle == .dark {
+                view.backgroundColor = .systemGray6
+                countriesButton.setTitleColor(.black, for: .normal)
+                refreshButton.imageView?.tintColor = .white
+            }
+            else {
+                view.backgroundColor = .white
+                countriesButton.setTitleColor(.white, for: .normal)
+                refreshButton.imageView?.tintColor = .black
+            }
+    }
+    
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        updateViewForUserInterfaceStyle()
+    }
+    
+    
+    func animateNumbersInLabels() {
+        DispatchQueue.global(qos: .background).async {
+            while !self.finishedDownloading {
+                DispatchQueue.main.async {
+                    self.confirmedCasesNumberLabel.text = "\(Int.random(in: 100000...2000000))"
+                    self.confirmedDeathsNumberLabel.text = "\(Int.random(in: 1000...100000))"
+                    self.confirmedRecoveriesNumberLabel.text = "\(Int.random(in: 10000...2000000))"
+                }
+                usleep(1000)
+            }
+        }
+    }
+    
+    
+    func checkDeviceAndUpdateConstraintsIfNeeded() {
+        
+        if UIScreen.main.bounds.height < 700 {
+            if UIScreen.main.bounds.height < 600 {
+                stackView.heightAnchor.constraint(equalToConstant: 180).isActive = true
+                appTitleLabel.font = appTitleLabel.font.withSize(30)
+                overviewTitleLabel.font = overviewTitleLabel.font.withSize(20)
+                casesTextLabel.font = casesTextLabel.font.withSize(18)
+                confirmedCasesNumberLabel.font = confirmedCasesNumberLabel.font.withSize(18)
+                deathsTextLabel.font = deathsTextLabel.font.withSize(18)
+                confirmedDeathsNumberLabel.font = confirmedDeathsNumberLabel.font.withSize(18)
+                activeTextLabel.font = confirmedDeathsNumberLabel.font.withSize(18)
+                confirmedRecoveriesNumberLabel.font = confirmedRecoveriesNumberLabel.font.withSize(18)
+                
+                appTitleLabelTopConstraint.constant = 15
+                countryLabelTopConstraint.constant = 10
+                stackViewBottomConstraint.constant = 10
+                countriesButtonTopConstraint.constant = 10
+                countriesButtonHeightConstraint.constant = 39
+                countriesButton.layer.cornerRadius = 20
+                
+                stackView.spacing = 8
+            }
+            imageViewWidthConstraint.constant = 40
+            imageViewHeightConstraint.constant = 40
+            countryLabelTopConstraint.constant = 10
+            stackViewBottomConstraint.constant = 20
+            countriesButtonTopConstraint.constant = 30
+            
+            appTitleLabel.font = appTitleLabel.font.withSize(32)
+            overviewTitleLabel.font = overviewTitleLabel.font.withSize(24)
+            lastUpdatedTextLabel.font = lastUpdatedTextLabel.font.withSize(16)
+            lastUpdatedLabel.font = lastUpdatedLabel.font.withSize(14.5)
+            
+            stackView.heightAnchor.constraint(equalToConstant: 230).isActive = true
+        }
+        else if UIScreen.main.bounds.height < 850 {
+            appTitleLabel.font = appTitleLabel.font.withSize(36)
+            overviewTitleLabel.font = overviewTitleLabel.font.withSize(26)
+            
+            countryLabelTopConstraint.constant = 15
+            imageViewWidthConstraint.constant = 60
+            imageViewHeightConstraint.constant = 60
+            stackViewBottomConstraint.constant = 25
+        }
+    }
 
 }
 

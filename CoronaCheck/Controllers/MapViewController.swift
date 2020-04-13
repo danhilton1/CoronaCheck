@@ -481,6 +481,7 @@ extension MapViewController: MKMapViewDelegate {
 }
 
 extension MapViewController: ChartViewDelegate {
+    
     func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
         
         if cardViewController.segmentedControl.selectedSegmentIndex == 0 {

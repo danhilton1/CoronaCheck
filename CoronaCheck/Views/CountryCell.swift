@@ -10,6 +10,8 @@ import UIKit
 
 class CountryCell: UICollectionViewCell {
 
+    static let reuseID = "CountryCell"
+    
     @IBOutlet weak var countryImageView: UIImageView!
     @IBOutlet weak var countryLabel: UILabel!
     

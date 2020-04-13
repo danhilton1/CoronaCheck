@@ -26,6 +26,7 @@
 		37B030AA24202A6400A34E16 /* CodableStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B030A924202A6400A34E16 /* CodableStructs.swift */; };
 		37B030AC24202C1A00A34E16 /* CoronaStatistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B030AB24202C1A00A34E16 /* CoronaStatistic.swift */; };
 		37B030EA2420305100A34E16 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B030E92420305100A34E16 /* SceneDelegate.swift */; };
+		37D4A03B2444808D0080500E /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D4A03A2444808D0080500E /* UIHelper.swift */; };
 		37F634CA2427A2F400A96E7B /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F634C92427A2F400A96E7B /* MapViewController.swift */; };
 		37F6398E2422BD9C0060F40C /* CountryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F6398C2422BD9C0060F40C /* CountryCell.swift */; };
 		37F6398F2422BD9C0060F40C /* CountryCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37F6398D2422BD9C0060F40C /* CountryCell.xib */; };
@@ -77,6 +78,7 @@
 		37B030A924202A6400A34E16 /* CodableStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableStructs.swift; sourceTree = "<group>"; };
 		37B030AB24202C1A00A34E16 /* CoronaStatistic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoronaStatistic.swift; sourceTree = "<group>"; };
 		37B030E92420305100A34E16 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		37D4A03A2444808D0080500E /* UIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHelper.swift; sourceTree = "<group>"; };
 		37F634C92427A2F400A96E7B /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		37F6398C2422BD9C0060F40C /* CountryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryCell.swift; sourceTree = "<group>"; };
 		37F6398D2422BD9C0060F40C /* CountryCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CountryCell.xib; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 			children = (
 				37AB89472423E5B9007970EC /* CountryProtocol.swift */,
 				371D55C1242CAED500156270 /* UIViewExtension.swift */,
+				37D4A03A2444808D0080500E /* UIHelper.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -496,6 +499,7 @@
 				37B030722420129F00A34E16 /* AppDelegate.swift in Sources */,
 				37B030AA24202A6400A34E16 /* CodableStructs.swift in Sources */,
 				37B030A52420236A00A34E16 /* OverviewViewController.swift in Sources */,
+				37D4A03B2444808D0080500E /* UIHelper.swift in Sources */,
 				3796C480242B9C27009F5FD1 /* CardView.swift in Sources */,
 				37B030A8242024DB00A34E16 /* NetworkingServices.swift in Sources */,
 				379B238B242A752000C305DC /* CardViewController.swift in Sources */,

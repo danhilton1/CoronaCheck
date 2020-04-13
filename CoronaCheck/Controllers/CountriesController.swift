@@ -11,39 +11,38 @@ import FlagKit
 
 class CountriesController: UIViewController {
     
+    enum Section {
+        case main
+    }
+    
     typealias DataSource = UICollectionViewDiffableDataSource<Section, Country>
     typealias DataSourceSnapshot = NSDiffableDataSourceSnapshot<Section, Country>
     
-    @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var searchBar: UISearchBar!
-    
-    //MARK:- Properties
-    
+    var collectionView: UICollectionView!
     private var dataSource: DataSource!
     private var snapshot: DataSourceSnapshot!
     
     var delegate: CountryDelegate?
     
     var countries: [Country] = []
+    let cache = NSCache<NSString, UIImage>()
     
     //MARK:- View Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setUpView()
+        configureCollectionView()
+        configureView()
         populateCountriesArray()
-        
-        collectionView.register(UINib(nibName: "CountryCell", bundle: nil), forCellWithReuseIdentifier: "Cell")
-        collectionView.delegate = self
-        searchBar.delegate = self
-        
         configureCollectionViewDataSource()
+        searchBar.delegate = self
         
     }
     
     
-    private func setUpView() {
+    private func configureView() {
         if traitCollection.userInterfaceStyle == .dark {
             view.backgroundColor = .systemGray6
             collectionView.backgroundColor = .systemGray6
@@ -55,9 +54,27 @@ class CountriesController: UIViewController {
     }
     
     
+    private func configureCollectionView() {
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: UIHelper.createThreeColumnFlowLayout(in: view))
+        view.addSubview(collectionView)
+        collectionView.delegate = self
+        
+        collectionView.register(UINib(nibName: "CountryCell", bundle: nil), forCellWithReuseIdentifier: CountryCell.reuseID)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 20),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    
+    
     func populateCountriesArray() {
         countries = [Country]()
-        
+
         for code in NSLocale.isoCountryCodes  {
             if Flag(countryCode: code) != nil {
                 
@@ -73,36 +90,19 @@ class CountriesController: UIViewController {
         countries = countries.sorted { $0.name < $1.name }
         countries.insert(Country(name: "Worldwide", code: nil, flagImage: UIImage(named: "EarthImage")!), at: 0)
         
-//        createSnapshot(from: countries)
-    }
-    
-    
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        setUpView()
-    }
-    
-}
-
-//MARK:- Extensions for CollectionView and SearchBar methods
-
-extension CountriesController: UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
-    
-    enum Section {
-        case main
     }
     
     
     private func configureCollectionViewDataSource() {
         dataSource = DataSource(collectionView: collectionView, cellProvider: { (collectionView, indexPath, country) -> CountryCell? in
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! CountryCell
-            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CountryCell.reuseID, for: indexPath) as! CountryCell
             cell.configure(with: country)
             
             return cell
         })
-        
         createSnapshot(from: countries)
     }
+    
     
     private func createSnapshot(from countries: [Country]) {
         snapshot = DataSourceSnapshot()
@@ -113,22 +113,17 @@ extension CountriesController: UICollectionViewDelegateFlowLayout, UISearchBarDe
         
     }
     
-
-    //MARK: CollectionView Layout
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let width = view.bounds.width
-        let padding: CGFloat = 12
-        let minimumItemSpacing: CGFloat = 10
-        let availableWidth = width - (padding * 2) - (minimumItemSpacing * 2)
-        let itemWidth = availableWidth / 3
-        let itemSize = CGSize(width: itemWidth, height: itemWidth + 20)
-
-        return itemSize
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        configureView()
     }
     
-    // MARK: UICollectionViewDelegate
+    
+}
+
+//MARK:- Extensions for CollectionView and SearchBar methods
+
+extension CountriesController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let country = dataSource.itemIdentifier(for: indexPath) else { return }
@@ -137,9 +132,11 @@ extension CountriesController: UICollectionViewDelegateFlowLayout, UISearchBarDe
         self.dismiss(animated: true)
     }
     
-    
-    
-    // MARK: SearchBar Delegate
+}
+
+// MARK:- SearchBar Delegate
+
+extension CountriesController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         let filteredCountries: [Country]
@@ -151,13 +148,16 @@ extension CountriesController: UICollectionViewDelegateFlowLayout, UISearchBarDe
         createSnapshot(from: filteredCountries)
     }
     
+    
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
     }
     
+    
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
     }
+    
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = false

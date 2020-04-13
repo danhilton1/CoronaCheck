@@ -258,17 +258,6 @@
                                 <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="30"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="iue-K5-Jl0">
-                                <rect key="frame" x="0.0" y="157" width="414" height="685"/>
-                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Spa-X0-7wY">
-                                    <size key="itemSize" width="50" height="50"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                </collectionViewFlowLayout>
-                                <cells/>
-                            </collectionView>
                             <searchBar contentMode="redraw" searchBarStyle="minimal" placeholder="Search for a country" translatesAutoresizingMaskIntoConstraints="NO" id="wIF-0A-ZC4">
                                 <rect key="frame" x="0.0" y="81" width="414" height="56"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -277,19 +266,14 @@
                         <color key="backgroundColor" red="0.274620533" green="0.27422633769999999" blue="0.29019856449999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="ekX-H6-qyi" firstAttribute="top" secondItem="MV4-fP-LCG" secondAttribute="top" constant="20" id="Aeq-FK-ehd"/>
-                            <constraint firstItem="MV4-fP-LCG" firstAttribute="trailing" secondItem="iue-K5-Jl0" secondAttribute="trailing" id="Cpx-Zg-qMQ"/>
-                            <constraint firstAttribute="bottom" secondItem="iue-K5-Jl0" secondAttribute="bottom" id="FJk-Zj-lYP"/>
                             <constraint firstItem="wIF-0A-ZC4" firstAttribute="trailing" secondItem="MV4-fP-LCG" secondAttribute="trailing" id="Gsl-IC-ydf"/>
                             <constraint firstItem="wIF-0A-ZC4" firstAttribute="leading" secondItem="MV4-fP-LCG" secondAttribute="leading" id="brb-Gh-bLu"/>
-                            <constraint firstItem="iue-K5-Jl0" firstAttribute="leading" secondItem="MV4-fP-LCG" secondAttribute="leading" id="d5q-sG-26S"/>
                             <constraint firstItem="ekX-H6-qyi" firstAttribute="centerX" secondItem="bVZ-fP-EeS" secondAttribute="centerX" id="mJr-c2-UPH"/>
-                            <constraint firstItem="iue-K5-Jl0" firstAttribute="top" secondItem="wIF-0A-ZC4" secondAttribute="bottom" constant="20" id="rFI-ly-bzW"/>
                             <constraint firstItem="wIF-0A-ZC4" firstAttribute="top" secondItem="ekX-H6-qyi" secondAttribute="bottom" constant="20" id="zET-nQ-ObX"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="MV4-fP-LCG"/>
                     </view>
                     <connections>
-                        <outlet property="collectionView" destination="iue-K5-Jl0" id="eje-xE-F93"/>
                         <outlet property="searchBar" destination="wIF-0A-ZC4" id="nDL-9S-ruC"/>
                     </connections>
                 </viewController>
