@@ -19,7 +19,7 @@ class MapViewController: UIViewController {
         case collapsed
     }
     
-    enum StatisticDetail {
+    enum StatisticCategory {
         case cases
         case deaths
         case recoveries
@@ -65,6 +65,7 @@ class MapViewController: UIViewController {
     
     var runningAnimations = [UIViewPropertyAnimator]()
     var animationProgressWhenInterrupted: CGFloat = 0
+    let activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
     
     var allStatistics: [CoronaStatistic]?
     var casesChartData: BarChartData?
@@ -142,12 +143,20 @@ class MapViewController: UIViewController {
         
         cardViewController.countryLabel.text = "Worldwide"
         
-        NetworkingServices.downloadData(forCountryCode: nil) { [weak self] (statistic) in
-            DispatchQueue.main.async {
-                self?.cardViewController.casesLabel.text = self?.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
-                self?.cardViewController.deathsLabel.text = self?.numberFormatter.string(from: NSNumber(value: statistic.deaths))
-                self?.cardViewController.recoveriesLabel.text = self?.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
+        NetworkingServices.downloadData(forCountryCode: nil) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let statistic):
+                DispatchQueue.main.async {
+                    self.cardViewController.casesLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
+                    self.cardViewController.deathsLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.deaths))
+                    self.cardViewController.recoveriesLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
+                }
+            case .failure(let error):
+                self.showErrorAlert(title: "Error", message: error.rawValue)
             }
+            
         }
     }
     
@@ -230,6 +239,7 @@ class MapViewController: UIViewController {
         }
     }
     
+    
     func animateTransitionIfNeeded(state: CardState, duration: TimeInterval) {
         if runningAnimations.isEmpty {
             
@@ -304,11 +314,13 @@ class MapViewController: UIViewController {
         }
     }
     
+    
     func updateInteractiveTransition(fractionCompleted: CGFloat) {
         for animator in runningAnimations {
             animator.fractionComplete = fractionCompleted + animationProgressWhenInterrupted
         }
     }
+    
     
     func continueInteractiveTransition() {
         for animator in runningAnimations {
@@ -325,6 +337,7 @@ class MapViewController: UIViewController {
         }
     }
 
+    
     func checkLocationServices() {
         if CLLocationManager.locationServicesEnabled() {
             setUpLocationManager()
@@ -334,6 +347,7 @@ class MapViewController: UIViewController {
             
         }
     }
+    
     
     func checkLocationAuthorization() {
         switch CLLocationManager.authorizationStatus() {
@@ -353,54 +367,36 @@ class MapViewController: UIViewController {
         }
     }
     
+    
     func setUpLocationManager() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
     
-    private func addAnnotations(forStatistic detail: StatisticDetail) {
+    
+    private func addAnnotations(forStatistic category: StatisticCategory) {
         
-        let activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
-        activityIndicator.style = .large
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(activityIndicator)
-        activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        show(activityIndicator: activityIndicator, in: view)
         
-        activityIndicator.startAnimating()
-        
-        var annontations = [MKPointAnnotation]()
-        
-        NetworkingServices.downloadAllLocationData { (statistics) in
-            self.allStatistics = statistics
+        NetworkingServices.downloadAllLocationData { [weak self] result in
+            guard let self = self else { return }
             
-            for statistic in statistics {
-                if let lat = statistic.latitude, let lon = statistic.longitude {
-                    let annotation = MKPointAnnotation()
-                    if detail == .cases {
-                        annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
-                    }
-                    else if detail == .deaths {
-                        annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.deaths))
-                    }
-                    else {
-                        annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
-                    }
-                    
-                    annotation.subtitle = statistic.province
-                    annotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-                    annontations.append(annotation)
-                }
+            switch result {
+            case .success(let statistics):
+                self.updateMapAnnotations(with: statistics, forCategory: category)
+                
+            case .failure(let error):
+                self.showErrorAlert(title: "Error retrieving data", message: error.rawValue)
             }
-            self.mapView.addAnnotations(annontations)
             
             DispatchQueue.main.async {
-                activityIndicator.stopAnimating()
-                activityIndicator.removeFromSuperview()
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.removeFromSuperview()
             }
             
         }
     }
+    
     
     @IBAction func locationButtonTapped(_ sender: UIButton) {
         centerViewOnUserLocation()
@@ -435,6 +431,32 @@ class MapViewController: UIViewController {
         
     }
     
+    
+    func updateMapAnnotations(with statistics: [CoronaStatistic], forCategory category: StatisticCategory) {
+        self.allStatistics = statistics
+        
+        var annontations = [MKPointAnnotation]()
+        
+        for statistic in statistics {
+            if let lat = statistic.latitude, let lon = statistic.longitude {
+                let annotation = MKPointAnnotation()
+                if category == .cases {
+                    annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
+                }
+                else if category == .deaths {
+                    annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.deaths))
+                }
+                else {
+                    annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
+                }
+                
+                annotation.subtitle = statistic.province
+                annotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+                annontations.append(annotation)
+            }
+        }
+        self.mapView.addAnnotations(annontations)
+    }
 
 }
 
@@ -470,9 +492,11 @@ extension MapViewController: MKMapViewDelegate {
         continueInteractiveTransition()
     }
     
+    
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         perform(#selector(hideCardView), with: nil, afterDelay: 0)
     }
+    
     
     @objc func hideCardView() {
         startInteractiveTransition(state: .collapsed, duration: 0.9)
@@ -493,6 +517,7 @@ extension MapViewController: ChartViewDelegate {
                 cardViewController.selectedValueLabel.text = "\(dateString):  \(numberFormatter.string(from: NSNumber(value: entry.y))!) deaths"
         }
     }
+    
     
     func chartValueNothingSelected(_ chartView: ChartViewBase) {
         cardViewController.selectedValueLabel.text = ""

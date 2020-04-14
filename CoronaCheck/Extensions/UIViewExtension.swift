@@ -6,10 +6,11 @@
 //  Copyright © 2020 Daniel Hilton. All rights reserved.
 //
 
-import Foundation
+
 import UIKit
 
 extension UIView {
+    
     func rotate(duration: CFTimeInterval = 3) {
         let rotateAnimation = CABasicAnimation(keyPath: "transform.rotation")
         rotateAnimation.fromValue = 0.0
@@ -19,4 +20,5 @@ extension UIView {
         rotateAnimation.repeatCount = Float.infinity
         self.layer.add(rotateAnimation, forKey: nil)
     }
+    
 }

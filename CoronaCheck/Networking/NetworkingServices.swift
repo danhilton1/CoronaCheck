@@ -12,97 +12,131 @@ import UIKit
 struct NetworkingServices {
     
     
-    static func downloadData(forCountryCode code: String?, completion: @escaping (CoronaStatistic) -> ()) {
+    static func downloadData(forCountryCode code: String?, completion: @escaping (Result<CoronaStatistic, ErrorMessage>) -> ()) {
 
         var url: URL
-        if let country = code {
-            url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=\(country)&timelines=1")!
+        if let countryCode = code {
+            url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=\(countryCode)&timelines=1")!
         }
         else {
             url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/latest")!
         }
         
-        let request = NSMutableURLRequest(url: url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 10.0)
-        request.httpMethod = "GET"
 
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest) { (data, response, error) in
+        let dataTask = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
             if let error = error {
                 print(error)
-            } else {
-                
-                guard let data = data else { return }
-                
-                do {
-                    var statistic: CoronaStatistic!
-                    
-                    if code != nil {
-                        
-                        let covidData = try JSONDecoder().decode(CoronaCountryData.self, from: data)
-                        
-                        var totalConfirmed = 0
-                        var totalDeaths = 0
-                        
-                        let locations = covidData.locations
-                        for location in locations {
-                            totalConfirmed += location.latest.confirmed
-                            totalDeaths += location.latest.deaths
-                        }
-                        
-                        statistic = CoronaStatistic(province: nil, country: locations.first?.country, confirmed: totalConfirmed, deaths: totalDeaths, latitude: nil, longitude: nil)
-                        
-                    }
-                    else {
-                        let covidData = try JSONDecoder().decode(CoronaAllData.self, from: data)
-                        
-                        statistic = CoronaStatistic(province: nil, country: nil, confirmed: covidData.latest.confirmed, deaths: covidData.latest.deaths)
-                    }
-                    completion(statistic)
-                }
-                catch {
-                    print(error)
-                }
+                completion(.failure(.unableToComplete))
+                return
             }
+            
+            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                completion(.failure(.invalidResponse))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(.invalidData))
+                return
+            }
+            
+            do {
+                var statistic: CoronaStatistic!
+                
+                if code != nil {
+                    
+                    let covidData = try JSONDecoder().decode(CoronaCountryData.self, from: data)
+                    
+                    var totalConfirmed = 0
+                    var totalDeaths = 0
+                    
+                    let locations = covidData.locations
+                    for location in locations {
+                        totalConfirmed += location.latest.confirmed
+                        totalDeaths += location.latest.deaths
+                    }
+                    
+                    statistic = CoronaStatistic(province: nil, country: locations.first?.country, confirmed: totalConfirmed, deaths: totalDeaths, latitude: nil, longitude: nil)
+                    
+                }
+                else {
+                    let covidData = try JSONDecoder().decode(CoronaAllData.self, from: data)
+                    statistic = CoronaStatistic(province: nil, country: nil, confirmed: covidData.latest.confirmed, deaths: covidData.latest.deaths)
+                }
+                completion(.success(statistic))
+            }
+            catch {
+                print(error)
+                completion(.failure(.invalidData))
+            }
+            
         }
         dataTask.resume()
     }
     
     
-    static func retrieveDateOfLastUpdate(completion: @escaping (String) -> ()) {
+    static func retrieveDateOfLastUpdate(completion: @escaping (Result<String,ErrorMessage>) -> ()) {
         
         guard let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=GB&timelines=1") else { return }
         
-        let request = URLRequest(url: url)
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
             
-            guard let data = data else { return }
+            if let error = error {
+                print(error)
+                completion(.failure(.unableToComplete))
+                return
+            }
+            
+            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                completion(.failure(.invalidResponse))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(.invalidData))
+                return
+            }
             
             do {
                 let covidData = try JSONDecoder().decode(CoronaCountryData.self, from: data)
                 
                 if let dateLastUpdated = covidData.locations.first?.last_updated {
-                    completion(dateLastUpdated)
+                    completion(.success(dateLastUpdated))
                 }
                 else {
-                    print("Date could not be retrieved")
+                    completion(.failure(.unableToGetDate))
                 }
             }
             catch {
                 print(error)
+                completion(.failure(.unableToGetDate))
             }
         }.resume()
     }
     
-    static func downloadAllLocationData(completion: @escaping ([CoronaStatistic]) -> ()) {
+    
+    static func downloadAllLocationData(completion: @escaping (Result<[CoronaStatistic],ErrorMessage>) -> ()) {
         
         guard let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?timelines=1") else { return }
         
-        let request = URLRequest(url: url)
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
             
-            guard let data = data else { return }
+            if let error = error {
+                print(error)
+                completion(.failure(.unableToComplete))
+                return
+            }
+            
+            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                completion(.failure(.invalidResponse))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(.invalidData))
+                return
+            }
             
             do {
                 var statistic = CoronaStatistic(province: nil, country: nil, confirmed: 0, deaths: 0, yesterdayConfirmed: nil, yesterdayDeaths: nil, latitude: nil, longitude: nil)
@@ -123,17 +157,14 @@ struct NetworkingServices {
                     
                     statistic.latitude = Double(location.coordinates.latitude)
                     statistic.longitude = Double(location.coordinates.longitude)
+                    
+                    // Move annotation point to a more central location of UK on map
                     if location.country == "United Kingdom" && location.province == "" {
                         statistic.latitude = 52.9548
                         statistic.longitude = -1.581
                     }
                     
-                    if location.province == "" {
-                        statistic.province = location.country
-                    }
-                    else {
-                        statistic.province = location.province
-                    }
+                    statistic.province = location.province == "" ? location.country : location.province
                     
                     var casesDict = NetworkingServices.retrieveTimelineData(timeline: location.timelines.confirmed.timeline)
                     statistic.casesTimeline = casesDict
@@ -160,11 +191,12 @@ struct NetworkingServices {
                     allStatistics.append(statistic)
                     
                 }
-                completion(allStatistics)
+                completion(.success(allStatistics))
             }
                 
             catch {
                 print(error)
+                completion(.failure(.invalidData))
             }   
         }.resume()
     }

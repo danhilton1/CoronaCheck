@@ -90,24 +90,16 @@ class OverviewViewController: UIViewController, CountryDelegate {
     
     func downloadData(countryCode: String?) {
         
-        NetworkingServices.downloadData(forCountryCode: countryCode) { (corona) in
+        NetworkingServices.downloadData(forCountryCode: countryCode) { [weak self] result in
+            guard let self = self else { return }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                self.finishedDownloading = true
-                self.refreshButton.layer.removeAllAnimations()
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
-                    self.confirmedCasesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: corona.confirmed))
-                    self.confirmedDeathsNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: corona.deaths))
-                    self.confirmedRecoveriesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: corona.activeOrRecovered))
-                }
-                NetworkingServices.retrieveDateOfLastUpdate { (date) in
-                    let date = self.inputFormatter.date(from: date) ?? Date()
-                    DispatchQueue.main.async {
-                        self.lastUpdatedLabel.text = self.outputFormatter.string(from: date)
-                    }
-                }
+            switch result {
+            case .success(let statistic):
+                self.updateUI(with: statistic)
+            case .failure(let error):
+                self.showErrorAlert(title: "Unable to retrieve data", message: error.rawValue)
             }
+            
         }
         
     }
@@ -144,6 +136,35 @@ class OverviewViewController: UIViewController, CountryDelegate {
     
     
     //MARK:- UI Methods
+    
+    func updateUI(with statistic: CoronaStatistic) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            self.finishedDownloading = true
+            self.refreshButton.layer.removeAllAnimations()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
+                self.confirmedCasesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
+                self.confirmedDeathsNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.deaths))
+                self.confirmedRecoveriesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
+            }
+            NetworkingServices.retrieveDateOfLastUpdate { [weak self] result in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let dateString):
+                    let date = self.inputFormatter.date(from: dateString) ?? Date()
+                    DispatchQueue.main.async {
+                        self.lastUpdatedLabel.text = self.outputFormatter.string(from: date)
+                    }
+                case .failure(let error):
+                    self.lastUpdatedLabel.text = error.rawValue
+                }
+                
+            }
+        }
+    }
+    
+    
     
     func updateViewForUserInterfaceStyle() {
             if traitCollection.userInterfaceStyle == .dark {
