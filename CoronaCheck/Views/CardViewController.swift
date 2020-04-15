@@ -30,6 +30,7 @@ class CardViewController: UIViewController {
     @IBOutlet weak var casesChangeLabel: UILabel!
     @IBOutlet weak var deathsChangeLabel: UILabel!
     @IBOutlet weak var activeChangeLabel: UILabel!
+    @IBOutlet weak var changeTextLabel: UILabel!
     @IBOutlet weak var barChartView: BarChartView!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var selectedValueLabel: UILabel!

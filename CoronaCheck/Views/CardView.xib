@@ -16,6 +16,7 @@
                 <outlet property="casesBackgroundView" destination="NP8-o9-7sb" id="Hld-zZ-zMn"/>
                 <outlet property="casesChangeLabel" destination="lsK-uq-JrW" id="Dot-6I-mey"/>
                 <outlet property="casesLabel" destination="Krx-QN-ESs" id="oaO-T4-xtt"/>
+                <outlet property="changeTextLabel" destination="fLJ-9c-N7e" id="qGv-gq-mAo"/>
                 <outlet property="countryLabel" destination="flH-PR-WaH" id="toh-gO-NfZ"/>
                 <outlet property="deathsBackgroundLabel" destination="i0d-yh-7KG" id="F6m-CT-5di"/>
                 <outlet property="deathsBackgroundView" destination="LmP-UU-dbe" id="M83-0p-z04"/>

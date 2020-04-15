@@ -142,6 +142,10 @@ class MapViewController: UIViewController {
         numberFormatter.numberStyle = .decimal
         
         cardViewController.countryLabel.text = "Worldwide"
+        cardViewController.casesChangeLabel.text = ""
+        cardViewController.deathsChangeLabel.text = ""
+        cardViewController.activeChangeLabel.text = ""
+        cardViewController.changeTextLabel.text = " "
         
         NetworkingServices.downloadData(forCountryCode: nil) { [weak self] result in
             guard let self = self else { return }
@@ -171,6 +175,7 @@ class MapViewController: UIViewController {
         cardViewController.casesChangeLabel.text = "(+\(numberFormatter.string(from: NSNumber(value: changeInConfirmed))!))*"
         cardViewController.deathsChangeLabel.text = "(+\(numberFormatter.string(from: NSNumber(value: changeInDeaths))!))*"
         cardViewController.activeChangeLabel.text = "(+\(numberFormatter.string(from: NSNumber(value: (changeInConfirmed - changeInDeaths)))!))*"
+        cardViewController.changeTextLabel.text = "* Change from yesterday"
         
         let chartDataSet = BarChartDataSet(entries: [BarChartDataEntry(x: 0, y: 0)])
         let dateFormatter = DateFormatter()
@@ -375,6 +380,11 @@ class MapViewController: UIViewController {
     
     
     private func addAnnotations(forStatistic category: StatisticCategory) {
+        
+        if let statistics = allStatistics {
+            updateMapAnnotations(with: statistics, forCategory: category)
+            return
+        }
         
         show(activityIndicator: activityIndicator, in: view)
         

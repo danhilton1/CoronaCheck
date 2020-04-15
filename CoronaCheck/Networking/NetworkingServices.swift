@@ -22,7 +22,6 @@ struct NetworkingServices {
             url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/latest")!
         }
         
-
         let dataTask = URLSession.shared.dataTask(with: url) { (data, response, error) in
             
             if let error = error {
