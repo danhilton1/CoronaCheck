@@ -23,7 +23,7 @@
                                 </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="wXo-oe-eBT" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="8xB-O7-MNG"/>
                             <constraint firstItem="wXo-oe-eBT" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="JHW-G3-ulP"/>

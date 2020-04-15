@@ -15,14 +15,8 @@ class CountryCell: UICollectionViewCell {
     @IBOutlet weak var countryImageView: UIImageView!
     @IBOutlet weak var countryLabel: UILabel!
     
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        
-        
-    }
 
+    
     func configure(with country: Country) {
         countryImageView.image = country.flagImage
         countryLabel.text = country.name

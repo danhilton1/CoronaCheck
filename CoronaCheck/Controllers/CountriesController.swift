@@ -19,13 +19,21 @@ class CountriesController: UIViewController {
     typealias DataSourceSnapshot = NSDiffableDataSourceSnapshot<Section, Country>
     
     @IBOutlet weak var searchBar: UISearchBar!
+    let activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
     var collectionView: UICollectionView!
     private var dataSource: DataSource!
     private var snapshot: DataSourceSnapshot!
     
     var delegate: CountryDelegate?
     
-    var countries: [Country] = []
+    var countries: [Country] = [] {
+        didSet {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.001) {
+                self.createSnapshot(from: self.countries)
+            }
+        }
+    }
+    
     let cache = NSCache<NSString, UIImage>()
     
     //MARK:- View Methods
@@ -35,7 +43,6 @@ class CountriesController: UIViewController {
         
         configureCollectionView()
         configureView()
-        populateCountriesArray()
         configureCollectionViewDataSource()
         searchBar.delegate = self
         
@@ -71,28 +78,6 @@ class CountriesController: UIViewController {
     }
     
     
-    
-    func populateCountriesArray() {
-        countries = [Country]()
-
-        for code in NSLocale.isoCountryCodes  {
-            if Flag(countryCode: code) != nil {
-                
-                let id = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
-                let name = NSLocale(localeIdentifier: "en_UK").displayName(forKey: NSLocale.Key.identifier, value: id) ?? "Country not found for code: \(code)"
-                let flag = Flag(countryCode: code)
-                if let confirmedFlag = flag {
-                    let flagImage = confirmedFlag.image(style: .circle)
-                    countries.append(Country(name: name, code: code, flagImage: flagImage))
-                }
-            }
-        }
-        countries = countries.sorted { $0.name < $1.name }
-        countries.insert(Country(name: "Worldwide", code: nil, flagImage: UIImage(named: "EarthImage")!), at: 0)
-        
-    }
-    
-    
     private func configureCollectionViewDataSource() {
         dataSource = DataSource(collectionView: collectionView, cellProvider: { (collectionView, indexPath, country) -> CountryCell? in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CountryCell.reuseID, for: indexPath) as! CountryCell
@@ -108,9 +93,8 @@ class CountriesController: UIViewController {
         snapshot = DataSourceSnapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(countries)
-        
+
         dataSource.apply(snapshot, animatingDifferences: true)
-        
     }
     
     

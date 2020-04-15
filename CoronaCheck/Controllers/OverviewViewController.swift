@@ -51,6 +51,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
     let numberFormatter = NumberFormatter()
     
     var countryCode: String?
+    var countries: [Country] = []
     var finishedDownloading = false
     
     //MARK:- View Methods
@@ -62,7 +63,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
         setUpViews()
         downloadData(countryCode: countryCode)
         checkDeviceAndUpdateConstraintsIfNeeded()
-        
+        populateCountriesArray()
     }
     
     
@@ -89,7 +90,6 @@ class OverviewViewController: UIViewController, CountryDelegate {
     //MARK:- Data Methods
     
     func downloadData(countryCode: String?) {
-        
         NetworkingServices.downloadData(forCountryCode: countryCode) { [weak self] result in
             guard let self = self else { return }
             
@@ -99,10 +99,9 @@ class OverviewViewController: UIViewController, CountryDelegate {
             case .failure(let error):
                 self.showErrorAlert(title: "Unable to retrieve data", message: error.rawValue)
             }
-            
         }
-        
     }
+    
     
     func loadDataFromCountry(country: Country) {
         countryCode = country.code
@@ -114,7 +113,44 @@ class OverviewViewController: UIViewController, CountryDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.downloadData(countryCode: country.code)
         }
-        
+    }
+    
+    
+    func retrieveDateOfLastUpdate() {
+        NetworkingServices.retrieveDateOfLastUpdate { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let dateString):
+                let date = self.inputFormatter.date(from: dateString) ?? Date()
+                DispatchQueue.main.async {
+                    self.lastUpdatedLabel.text = self.outputFormatter.string(from: date)
+                }
+            case .failure(let error):
+                self.lastUpdatedLabel.text = error.rawValue
+            }
+        }
+    }
+    
+    
+    func populateCountriesArray() {
+        countries = [Country]()
+
+        for code in NSLocale.isoCountryCodes  {
+            if Flag(countryCode: code) != nil {
+                
+                let id = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
+                let name = NSLocale(localeIdentifier: "en_UK").displayName(forKey: NSLocale.Key.identifier, value: id) ?? "Country not found for code: \(code)"
+                let flag = Flag(countryCode: code)
+                if let confirmedFlag = flag {
+                    let flagImage = confirmedFlag.image(style: .circle)
+                    countries.append(Country(name: name, code: code, flagImage: flagImage))
+                }
+            }
+        }
+        countries = countries.sorted { $0.name < $1.name }
+        countries.insert(Country(name: "Worldwide", code: nil, flagImage: UIImage(named: "EarthImage")!), at: 0)
+
     }
     
 
@@ -131,6 +167,8 @@ class OverviewViewController: UIViewController, CountryDelegate {
         if segue.identifier == "GoToCountries" {
             let destVC = segue.destination as! CountriesController
             destVC.delegate = self
+            destVC.countries = countries
+            
         }
     }
     
@@ -141,25 +179,12 @@ class OverviewViewController: UIViewController, CountryDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             self.finishedDownloading = true
             self.refreshButton.layer.removeAllAnimations()
+            self.retrieveDateOfLastUpdate()
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
                 self.confirmedCasesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
                 self.confirmedDeathsNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.deaths))
                 self.confirmedRecoveriesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
-            }
-            NetworkingServices.retrieveDateOfLastUpdate { [weak self] result in
-                guard let self = self else { return }
-                
-                switch result {
-                case .success(let dateString):
-                    let date = self.inputFormatter.date(from: dateString) ?? Date()
-                    DispatchQueue.main.async {
-                        self.lastUpdatedLabel.text = self.outputFormatter.string(from: date)
-                    }
-                case .failure(let error):
-                    self.lastUpdatedLabel.text = error.rawValue
-                }
-                
             }
         }
     }

@@ -504,6 +504,8 @@ extension MapViewController: MKMapViewDelegate {
     }
 }
 
+//MARK:- Extension for ChartViewDelegate
+
 extension MapViewController: ChartViewDelegate {
     
     func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
