@@ -13,7 +13,6 @@
 		3796C480242B9C27009F5FD1 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3796C47F242B9C27009F5FD1 /* CardView.swift */; };
 		379B2389242A74FF00C305DC /* CardView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 379B2388242A74FF00C305DC /* CardView.xib */; };
 		379B238B242A752000C305DC /* CardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379B238A242A751F00C305DC /* CardViewController.swift */; };
-		37AB89482423E5B9007970EC /* CountryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37AB89472423E5B9007970EC /* CountryProtocol.swift */; };
 		37AB894A24240E7D007970EC /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37AB894924240E7D007970EC /* Country.swift */; };
 		37B030722420129F00A34E16 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B030712420129F00A34E16 /* AppDelegate.swift */; };
 		37B030792420129F00A34E16 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 37B030772420129F00A34E16 /* Main.storyboard */; };
@@ -61,7 +60,6 @@
 		3796C47F242B9C27009F5FD1 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		379B2388242A74FF00C305DC /* CardView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CardView.xib; sourceTree = "<group>"; };
 		379B238A242A751F00C305DC /* CardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardViewController.swift; sourceTree = "<group>"; };
-		37AB89472423E5B9007970EC /* CountryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryProtocol.swift; sourceTree = "<group>"; };
 		37AB894924240E7D007970EC /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		37B0306E2420129F00A34E16 /* CoronaCheck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoronaCheck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		37B030712420129F00A34E16 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -136,7 +134,6 @@
 		37AB89462423E599007970EC /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				37AB89472423E5B9007970EC /* CountryProtocol.swift */,
 				37D4A03A2444808D0080500E /* UIHelper.swift */,
 				37D76DA7244600C9008CC44B /* ErrorMessage.swift */,
 			);
@@ -507,7 +504,6 @@
 			files = (
 				37F634CA2427A2F400A96E7B /* MapViewController.swift in Sources */,
 				37D76DA8244600C9008CC44B /* ErrorMessage.swift in Sources */,
-				37AB89482423E5B9007970EC /* CountryProtocol.swift in Sources */,
 				37B030AC24202C1A00A34E16 /* CoronaStatistic.swift in Sources */,
 				377A7F5E2422922900E0EC36 /* CountriesController.swift in Sources */,
 				371D55C2242CAED500156270 /* UIViewExtension.swift in Sources */,

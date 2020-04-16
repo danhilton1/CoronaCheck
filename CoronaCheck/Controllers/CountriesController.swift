@@ -93,7 +93,7 @@ class CountriesController: UIViewController {
         snapshot = DataSourceSnapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(countries)
-
+        
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     

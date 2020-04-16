@@ -2,21 +2,17 @@ PODS:
   - Charts (3.4.0):
     - Charts/Core (= 3.4.0)
   - Charts/Core (3.4.0)
-  - FlagKit (2.2)
 
 DEPENDENCIES:
   - Charts
-  - FlagKit
 
 SPEC REPOS:
   trunk:
     - Charts
-    - FlagKit
 
 SPEC CHECKSUMS:
   Charts: 74c9f256eaf0460c0c416522d1cf8c634ea6b286
-  FlagKit: eca7dc89064b0c986302ba9acefad1bf80a435b1
 
-PODFILE CHECKSUM: 61333d1524aec19a1960d225a1270d21d4644f01
+PODFILE CHECKSUM: 19775ec4c8bfd5c1c62e19b91ac77acaac06f4dc
 
 COCOAPODS: 1.8.4

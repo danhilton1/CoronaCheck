@@ -9,6 +9,10 @@
 import UIKit
 import FlagKit
 
+protocol CountryDelegate {
+    func loadDataFromCountry(country: Country)
+}
+
 class OverviewViewController: UIViewController, CountryDelegate {
 
     //IBOutlets
@@ -137,15 +141,12 @@ class OverviewViewController: UIViewController, CountryDelegate {
         countries = [Country]()
 
         for code in NSLocale.isoCountryCodes  {
-            if Flag(countryCode: code) != nil {
                 
-                let id = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
-                let name = NSLocale(localeIdentifier: "en_UK").displayName(forKey: NSLocale.Key.identifier, value: id) ?? "Country not found for code: \(code)"
-                let flag = Flag(countryCode: code)
-                if let confirmedFlag = flag {
-                    let flagImage = confirmedFlag.image(style: .circle)
-                    countries.append(Country(name: name, code: code, flagImage: flagImage))
-                }
+            let id = NSLocale.localeIdentifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code])
+            let name = NSLocale(localeIdentifier: "en_UK").displayName(forKey: NSLocale.Key.identifier, value: id) ?? "Country not found for code: \(code)"
+            
+            if let flagImage = UIImage(named: name.lowercased().replacingOccurrences(of: " ", with: "-")) {
+                countries.append(Country(name: name, code: code, flagImage: flagImage))
             }
         }
         countries = countries.sorted { $0.name < $1.name }

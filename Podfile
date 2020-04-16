@@ -7,7 +7,6 @@ target 'CoronaCheck' do
 
   # Pods for CoronaCheck
 
-pod 'FlagKit'
 pod 'Charts'
 
   target 'CoronaCheckTests' do
