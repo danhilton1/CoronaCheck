@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import FlagKit
 
 protocol CountryDelegate {
     func loadDataFromCountry(country: Country)
@@ -151,7 +150,6 @@ class OverviewViewController: UIViewController, CountryDelegate {
         }
         countries = countries.sorted { $0.name < $1.name }
         countries.insert(Country(name: "Worldwide", code: nil, flagImage: UIImage(named: "EarthImage")!), at: 0)
-
     }
     
 
