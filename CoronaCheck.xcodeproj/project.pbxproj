@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1884A16BECC8BB5ACA911D10 /* Pods_CoronaCheck_CoronaCheckUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA39D3CC72551D81CC7F37AB /* Pods_CoronaCheck_CoronaCheckUITests.framework */; };
 		371D55C2242CAED500156270 /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371D55C1242CAED500156270 /* UIViewExtension.swift */; };
+		37360CF824489D84001DDFE0 /* CustomPointAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37360CF724489D84001DDFE0 /* CustomPointAnnotation.swift */; };
+		37360CFA2448A6C6001DDFE0 /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37360CF92448A6C6001DDFE0 /* UIImage+Ext.swift */; };
 		377A7F5E2422922900E0EC36 /* CountriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377A7F5D2422922900E0EC36 /* CountriesController.swift */; };
 		3796C480242B9C27009F5FD1 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3796C47F242B9C27009F5FD1 /* CardView.swift */; };
 		379B2389242A74FF00C305DC /* CardView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 379B2388242A74FF00C305DC /* CardView.xib */; };
@@ -27,6 +29,7 @@
 		37B030EA2420305100A34E16 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B030E92420305100A34E16 /* SceneDelegate.swift */; };
 		37D4A03B2444808D0080500E /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D4A03A2444808D0080500E /* UIHelper.swift */; };
 		37D4A03D244496CE0080500E /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D4A03C244496CE0080500E /* UIViewController+Ext.swift */; };
+		37D756AA2449B784000E9C95 /* AnnotationTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D756A92449B784000E9C95 /* AnnotationTitleLabel.swift */; };
 		37D76DA8244600C9008CC44B /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D76DA7244600C9008CC44B /* ErrorMessage.swift */; };
 		37F634CA2427A2F400A96E7B /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F634C92427A2F400A96E7B /* MapViewController.swift */; };
 		37F6398E2422BD9C0060F40C /* CountryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F6398C2422BD9C0060F40C /* CountryCell.swift */; };
@@ -56,6 +59,8 @@
 		0788F6E8F07C88B92FF1F6CD /* Pods-CoronaCheckTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoronaCheckTests.release.xcconfig"; path = "Target Support Files/Pods-CoronaCheckTests/Pods-CoronaCheckTests.release.xcconfig"; sourceTree = "<group>"; };
 		315BD615B05B1CB114EFAF45 /* Pods_CoronaCheck.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CoronaCheck.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		371D55C1242CAED500156270 /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
+		37360CF724489D84001DDFE0 /* CustomPointAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPointAnnotation.swift; sourceTree = "<group>"; };
+		37360CF92448A6C6001DDFE0 /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
 		377A7F5D2422922900E0EC36 /* CountriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountriesController.swift; sourceTree = "<group>"; };
 		3796C47F242B9C27009F5FD1 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		379B2388242A74FF00C305DC /* CardView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CardView.xib; sourceTree = "<group>"; };
@@ -80,6 +85,7 @@
 		37B030E92420305100A34E16 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		37D4A03A2444808D0080500E /* UIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHelper.swift; sourceTree = "<group>"; };
 		37D4A03C244496CE0080500E /* UIViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Ext.swift"; sourceTree = "<group>"; };
+		37D756A92449B784000E9C95 /* AnnotationTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationTitleLabel.swift; sourceTree = "<group>"; };
 		37D76DA7244600C9008CC44B /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		37F634C92427A2F400A96E7B /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		37F6398C2422BD9C0060F40C /* CountryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryCell.swift; sourceTree = "<group>"; };
@@ -217,6 +223,8 @@
 				379B2388242A74FF00C305DC /* CardView.xib */,
 				3796C47F242B9C27009F5FD1 /* CardView.swift */,
 				379B238A242A751F00C305DC /* CardViewController.swift */,
+				37360CF724489D84001DDFE0 /* CustomPointAnnotation.swift */,
+				37D756A92449B784000E9C95 /* AnnotationTitleLabel.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -244,6 +252,7 @@
 			children = (
 				371D55C1242CAED500156270 /* UIViewExtension.swift */,
 				37D4A03C244496CE0080500E /* UIViewController+Ext.swift */,
+				37360CF92448A6C6001DDFE0 /* UIImage+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -517,7 +526,10 @@
 				37B030EA2420305100A34E16 /* SceneDelegate.swift in Sources */,
 				37AB894A24240E7D007970EC /* Country.swift in Sources */,
 				37D4A03D244496CE0080500E /* UIViewController+Ext.swift in Sources */,
+				37360CFA2448A6C6001DDFE0 /* UIImage+Ext.swift in Sources */,
 				37F6398E2422BD9C0060F40C /* CountryCell.swift in Sources */,
+				37360CF824489D84001DDFE0 /* CustomPointAnnotation.swift in Sources */,
+				37D756AA2449B784000E9C95 /* AnnotationTitleLabel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -27,6 +27,7 @@ class MapViewController: UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var keyButton: UIButton!
+    var annotationView: MKAnnotationView!
     
     //MARK:- Properties
     
@@ -445,11 +446,11 @@ class MapViewController: UIViewController {
     func updateMapAnnotations(with statistics: [CoronaStatistic], forCategory category: StatisticCategory) {
         self.allStatistics = statistics
         
-        var annontations = [MKPointAnnotation]()
+        var annontations = [CustomPointAnnotation]()
         
         for statistic in statistics {
             if let lat = statistic.latitude, let lon = statistic.longitude {
-                let annotation = MKPointAnnotation()
+                let annotation = CustomPointAnnotation()
                 if category == .cases {
                     annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
                 }
@@ -458,6 +459,13 @@ class MapViewController: UIViewController {
                 }
                 else {
                     annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
+                }
+                
+                if let country = statistic.country {
+                    annotation.image = UIImage(named: country.lowercased().replacingOccurrences(of: " ", with: "-") + "(pin)")
+                    if let annotationImage = annotation.image {
+                        annotation.image = annotationImage.resizeImage(targetSize: CGSize(width: 45, height: 45))
+                    }
                 }
                 
                 annotation.subtitle = statistic.province
@@ -485,6 +493,37 @@ extension MapViewController: CLLocationManagerDelegate {
 // MARK:- Extension for MapView Delegate Methods
 
 extension MapViewController: MKMapViewDelegate {
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if !(annotation is CustomPointAnnotation) {
+            return nil
+        }
+        
+        let reuseId = "Location"
+
+        annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId)
+        if annotationView == nil {
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            annotationView!.canShowCallout = true
+        }
+        else {
+            annotationView!.annotation = annotation
+        }
+        let customAnnotation = annotation as! CustomPointAnnotation
+        annotationView!.image = customAnnotation.image
+        let titleLabel = AnnotationTitleLabel(text: customAnnotation.title ?? "")
+        
+        for view in annotationView.subviews {
+            view.removeFromSuperview()
+        }
+        annotationView?.addSubview(titleLabel)
+        titleLabel.centerXAnchor.constraint(equalTo: annotationView!.centerXAnchor).isActive = true
+        titleLabel.bottomAnchor.constraint(equalTo: annotationView!.bottomAnchor, constant: 15).isActive = true
+
+
+        return annotationView
+    }
+    
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         

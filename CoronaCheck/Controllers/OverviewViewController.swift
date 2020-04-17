@@ -101,6 +101,13 @@ class OverviewViewController: UIViewController, CountryDelegate {
                 self.updateUI(with: statistic)
             case .failure(let error):
                 self.showErrorAlert(title: "Unable to retrieve data", message: error.rawValue)
+                DispatchQueue.main.async {
+                    self.finishedDownloading = true
+                    self.refreshButton.layer.removeAllAnimations()
+                    self.confirmedCasesNumberLabel.text = "0"
+                    self.confirmedDeathsNumberLabel.text = "0"
+                    self.confirmedRecoveriesNumberLabel.text = "0"
+                }
             }
         }
     }
@@ -130,7 +137,9 @@ class OverviewViewController: UIViewController, CountryDelegate {
                     self.lastUpdatedLabel.text = self.outputFormatter.string(from: date)
                 }
             case .failure(let error):
-                self.lastUpdatedLabel.text = error.rawValue
+                DispatchQueue.main.async {
+                    self.lastUpdatedLabel.text = error.rawValue
+                }
             }
         }
     }

@@ -151,6 +151,7 @@ struct NetworkingServices {
                     let currentDeaths = location.latest.deaths
                     
                     statistic.country = location.country
+                    if location.country == "Czechia" { statistic.country = "Czech Republic" }
                     statistic.confirmed = currentCases
                     statistic.deaths = currentDeaths
                     
