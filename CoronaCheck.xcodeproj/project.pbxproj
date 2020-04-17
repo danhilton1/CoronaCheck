@@ -216,15 +216,11 @@
 		37B030A22420235000A34E16 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				37B030772420129F00A34E16 /* Main.storyboard */,
-				37B0307C242012A000A34E16 /* LaunchScreen.storyboard */,
-				37F6398C2422BD9C0060F40C /* CountryCell.swift */,
-				37F6398D2422BD9C0060F40C /* CountryCell.xib */,
-				379B2388242A74FF00C305DC /* CardView.xib */,
-				3796C47F242B9C27009F5FD1 /* CardView.swift */,
-				379B238A242A751F00C305DC /* CardViewController.swift */,
+				37D756AE2449C18A000E9C95 /* Storyboards */,
+				37D756AD2449C186000E9C95 /* Views */,
+				37D756AC2449C17F000E9C95 /* Cells */,
+				37D756AB2449C178000E9C95 /* Labels */,
 				37360CF724489D84001DDFE0 /* CustomPointAnnotation.swift */,
-				37D756A92449B784000E9C95 /* AnnotationTitleLabel.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -255,6 +251,42 @@
 				37360CF92448A6C6001DDFE0 /* UIImage+Ext.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		37D756AB2449C178000E9C95 /* Labels */ = {
+			isa = PBXGroup;
+			children = (
+				37D756A92449B784000E9C95 /* AnnotationTitleLabel.swift */,
+			);
+			path = Labels;
+			sourceTree = "<group>";
+		};
+		37D756AC2449C17F000E9C95 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				37F6398C2422BD9C0060F40C /* CountryCell.swift */,
+				37F6398D2422BD9C0060F40C /* CountryCell.xib */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		37D756AD2449C186000E9C95 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				379B2388242A74FF00C305DC /* CardView.xib */,
+				3796C47F242B9C27009F5FD1 /* CardView.swift */,
+				379B238A242A751F00C305DC /* CardViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		37D756AE2449C18A000E9C95 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				37B030772420129F00A34E16 /* Main.storyboard */,
+				37B0307C242012A000A34E16 /* LaunchScreen.storyboard */,
+			);
+			path = Storyboards;
 			sourceTree = "<group>";
 		};
 		C69F8DB31A97544DDAFDB5C5 /* Pods */ = {
