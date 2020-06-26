@@ -12,7 +12,7 @@ struct CoronaStatistic {
     
     var province: String?
     var country: String?
-//    var lastUpdate: String
+    var lastUpdated: Date
     var confirmed: Int
     var deaths: Int
     var activeOrRecovered: Int {
@@ -31,4 +31,10 @@ struct CoronaStatistic {
     var latitude: Double?
     var longitude: Double?
     
+}
+
+
+struct TimelineData {
+    var casesTimeline: Array<(key: Date, value: Int)>
+    var deathsTimeline: Array<(key: Date, value: Int)>
 }

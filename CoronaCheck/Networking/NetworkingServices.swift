@@ -9,17 +9,20 @@
 import Foundation
 import UIKit
 
-struct NetworkingServices {
+class NetworkingServices {
     
+    static let shared = NetworkingServices()
     
-    static func downloadData(forCountryCode code: String?, completion: @escaping (Result<CoronaStatistic, ErrorMessage>) -> ()) {
+    private init() {}
+    
+    func downloadData(forCountryCode code: String?, completion: @escaping (Result<CoronaStatistic, ErrorMessage>) -> ()) {
 
         var url: URL
         if let countryCode = code {
-            url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=\(countryCode)&timelines=1")!
+            url = URL(string: "https://disease.sh/v2/countries/\(countryCode)")!
         }
         else {
-            url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/latest")!
+            url = URL(string: "https://disease.sh/v2/all")!
         }
         
         let dataTask = URLSession.shared.dataTask(with: url) { (data, response, error) in
@@ -47,21 +50,15 @@ struct NetworkingServices {
                     
                     let covidData = try JSONDecoder().decode(CoronaCountryData.self, from: data)
                     
-                    var totalConfirmed = 0
-                    var totalDeaths = 0
+                    let lastUpdatedDate = Date(timeIntervalSince1970: TimeInterval(covidData.updated / 1000))
                     
-                    let locations = covidData.locations
-                    for location in locations {
-                        totalConfirmed += location.latest.confirmed
-                        totalDeaths += location.latest.deaths
-                    }
-                    
-                    statistic = CoronaStatistic(province: nil, country: locations.first?.country, confirmed: totalConfirmed, deaths: totalDeaths, latitude: nil, longitude: nil)
+                    statistic = CoronaStatistic(province: nil, country: covidData.country, lastUpdated: lastUpdatedDate, confirmed: covidData.cases, deaths: covidData.deaths, latitude: nil, longitude: nil)
                     
                 }
                 else {
                     let covidData = try JSONDecoder().decode(CoronaAllData.self, from: data)
-                    statistic = CoronaStatistic(province: nil, country: nil, confirmed: covidData.latest.confirmed, deaths: covidData.latest.deaths)
+                    let lastUpdatedDate = Date(timeIntervalSince1970: TimeInterval(covidData.updated / 1000))
+                    statistic = CoronaStatistic(province: nil, country: nil, lastUpdated: lastUpdatedDate, confirmed: covidData.cases, deaths: covidData.deaths)
                 }
                 completion(.success(statistic))
             }
@@ -75,9 +72,10 @@ struct NetworkingServices {
     }
     
     
-    static func retrieveDateOfLastUpdate(completion: @escaping (Result<String,ErrorMessage>) -> ()) {
+    
+    func downloadAllLocationData(completion: @escaping (Result<[CoronaStatistic],ErrorMessage>) -> ()) {
         
-        guard let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=GB&timelines=1") else { return }
+        guard let url = URL(string: "https://disease.sh/v2/countries") else { return }
         
         URLSession.shared.dataTask(with: url) { (data, response, error) in
             
@@ -98,114 +96,161 @@ struct NetworkingServices {
             }
             
             do {
-                let covidData = try JSONDecoder().decode(CoronaCountryData.self, from: data)
-                
-                if let dateLastUpdated = covidData.locations.first?.last_updated {
-                    completion(.success(dateLastUpdated))
-                }
-                else {
-                    completion(.failure(.unableToGetDate))
-                }
-            }
-            catch {
-                print(error)
-                completion(.failure(.unableToGetDate))
-            }
-        }.resume()
-    }
-    
-    
-    static func downloadAllLocationData(completion: @escaping (Result<[CoronaStatistic],ErrorMessage>) -> ()) {
-        
-        guard let url = URL(string: "https://coronavirus-tracker-api.herokuapp.com/v2/locations?timelines=1") else { return }
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            
-            if let error = error {
-                print(error)
-                completion(.failure(.unableToComplete))
-                return
-            }
-            
-            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                completion(.failure(.invalidResponse))
-                return
-            }
-            
-            guard let data = data else {
-                completion(.failure(.invalidData))
-                return
-            }
-            
-            do {
-                var statistic = CoronaStatistic(province: nil, country: nil, confirmed: 0, deaths: 0, yesterdayConfirmed: nil, yesterdayDeaths: nil, latitude: nil, longitude: nil)
+                let covidData = try JSONDecoder().decode([CoronaCountryData].self, from: data)
                 var allStatistics = [CoronaStatistic]()
+//                let dispatchGroup = DispatchGroup()
+//                let dispatchQueue = DispatchQueue(label: "custom")
+//                let dispatchSephamore = DispatchSemaphore(value: 0)
                 
-                let covidData = try JSONDecoder().decode(CoronaCountryData.self, from: data)
+                var statistic = CoronaStatistic(province: nil, country: nil, lastUpdated: Date(), confirmed: 0, deaths: 0, yesterdayConfirmed: nil, yesterdayDeaths: nil, latitude: nil, longitude: nil)
                 
-                let locations = covidData.locations
+                for entry in covidData {
                 
-                for location in locations {
+                    statistic.country = entry.country
+                    if entry.country == "Czechia" { statistic.country = "Czech Republic" }
                     
-                    let currentCases = location.latest.confirmed
-                    let currentDeaths = location.latest.deaths
-                    
-                    statistic.country = location.country
-                    if location.country == "Czechia" { statistic.country = "Czech Republic" }
-                    statistic.confirmed = currentCases
-                    statistic.deaths = currentDeaths
-                    
-                    statistic.latitude = Double(location.coordinates.latitude)
-                    statistic.longitude = Double(location.coordinates.longitude)
+                    statistic.latitude = Double(entry.countryInfo.lat)
+                    statistic.longitude = Double(entry.countryInfo.long)
                     
                     // Move annotation point to a more central location of UK on map
-                    if location.country == "United Kingdom" && location.province == "" {
+                    if entry.country == "United Kingdom" {
                         statistic.latitude = 52.9548
                         statistic.longitude = -1.581
                     }
                     
-                    statistic.province = location.province == "" ? location.country : location.province
+                    statistic.confirmed = entry.cases
+                    statistic.deaths = entry.deaths
                     
-                    var casesDict = NetworkingServices.retrieveTimelineData(timeline: location.timelines.confirmed.timeline)
-                    statistic.casesTimeline = casesDict
-                    
-                    var yesterdayCases = casesDict.last?.value ?? 0
-                    if yesterdayCases == currentCases {
-                        casesDict = casesDict.dropLast()
-                        yesterdayCases = casesDict.last?.value ?? 0
-                    }
-                    statistic.yesterdayConfirmed = yesterdayCases
-                    
-                    var deathsDict = NetworkingServices.retrieveTimelineData(timeline: location.timelines.deaths.timeline)
-                    statistic.deathsTimeline = deathsDict
-                    
-                    var yesterdayDeaths = deathsDict.last?.value ?? 0
-                    if yesterdayDeaths == currentDeaths {
-                        deathsDict = deathsDict.dropLast()
-                        yesterdayDeaths = deathsDict.last?.value ?? 0
-                    }
-                    statistic.yesterdayDeaths = yesterdayDeaths
-                    
-                    
-
                     allStatistics.append(statistic)
-                    
                 }
                 completion(.success(allStatistics))
-            }
+//                self.blahblah(data: covidData) { (statistics) in
+//                    print(statistics.count)
+//                    completion(.success(statistics))
+//                }
+//                dispatchQueue.async {
+//                    for entry in covidData {
+//                        dispatchGroup.enter()
+//                        self.appendTimelineDataTo(entry: entry) { statistic in
+//                            allStatistics.append(statistic)
+//                            dispatchSephamore.signal()
+//
+//                        }
+//                        dispatchSephamore.wait()
+//                        dispatchGroup.leave()
+//                    }
+//                }
+//
+//                dispatchGroup.notify(queue: dispatchQueue) {
+//                    print("notified")
+//                    completion(.success(allStatistics))
+//                }
                 
+            }
             catch {
                 print(error)
                 completion(.failure(.invalidData))
-            }   
+            }
         }.resume()
     }
     
     
+    func blahblah(data: [CoronaCountryData], completed: @escaping ([CoronaStatistic]) ->()) {
+        let dispatchGroup = DispatchGroup()
+        var allStatistics = [CoronaStatistic]()
+        
+        for entry in data {
+            dispatchGroup.enter()
+            self.appendTimelineDataTo(entry: entry) { statistic in
+                allStatistics.append(statistic)
+                dispatchGroup.leave()
+            }
+//            dispatchGroup.leave()
+        }
+        dispatchGroup.notify(queue: .main) {
+            print(allStatistics.count)
+            completed(allStatistics)
+        }
+        
+        
+    }
     
-    static func retrieveTimelineData(timeline: [String: Int]) -> Array<(key: Date, value: Int)> {
+    
+    func appendTimelineDataTo(entry: CoronaCountryData, completion: @escaping (CoronaStatistic) -> ()) {
+        var statistic = CoronaStatistic(province: nil, country: nil, lastUpdated: Date(), confirmed: 0, deaths: 0, yesterdayConfirmed: nil, yesterdayDeaths: nil, latitude: nil, longitude: nil)
+        
+        downloadTimelineData(for: entry.country) { result in
+            switch result {
+            case .success(let timelineData):
+                statistic.casesTimeline = timelineData.casesTimeline
+                statistic.deathsTimeline = timelineData.deathsTimeline
+                
+                statistic.country = entry.country
+                if entry.country == "Czechia" { statistic.country = "Czech Republic" }
+                
+                statistic.latitude = Double(entry.countryInfo.lat)
+                statistic.longitude = Double(entry.countryInfo.long)
+                
+                // Move annotation point to a more central location of UK on map
+                if entry.country == "United Kingdom" {
+                    statistic.latitude = 52.9548
+                    statistic.longitude = -1.581
+                }
+                
+                statistic.confirmed = entry.cases
+                statistic.deaths = entry.deaths
+                statistic.yesterdayConfirmed = timelineData.casesTimeline.last?.value
+                statistic.yesterdayDeaths = timelineData.deathsTimeline.last?.value
+
+                completion(statistic)
+                
+            case .failure(let error):
+                print(error.rawValue)
+            }
+        }
+    }
+    
+    
+    func downloadTimelineData(for country: String, completion: @escaping (Result<TimelineData,ErrorMessage>) -> ()) {
+        let country = country.replacingOccurrences(of: " ", with: "-")
+        guard let url = URL(string: "https://disease.sh/v2/historical/\(country)") else { return }
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
+            if let error = error {
+                print(error)
+                completion(.failure(.unableToComplete))
+                return
+            }
+            
+            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                completion(.failure(.invalidResponse))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(.invalidData))
+                return
+            }
+            
+            do {
+                let covidData = try JSONDecoder().decode(CoronaCoutryDataTimeline.self, from: data)
+
+                let casesDict = self.convertTimelineData(timeline: covidData.timeline.cases)
+                let deathsDict = self.convertTimelineData(timeline: covidData.timeline.deaths)
+                let timelineData = TimelineData(casesTimeline: casesDict, deathsTimeline: deathsDict)
+                
+                completion(.success(timelineData))
+            } catch {
+                completion(.failure(.unableToComplete))
+            }
+        }.resume()
+    }
+    
+    
+    func convertTimelineData(timeline: [String: Int]) -> Array<(key: Date, value: Int)> {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        dateFormatter.dateFormat = "MM/dd/yy"
         
         var dateDictionary = [Date: Int]()
         

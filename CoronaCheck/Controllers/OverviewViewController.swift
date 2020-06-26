@@ -77,7 +77,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
         updateViewForUserInterfaceStyle()
         
         inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
-        outputFormatter.dateFormat = "E, d MMM yyyy HH:mm:ss"
+        outputFormatter.dateFormat = "E, d MMM HH:mm:ss"
         numberFormatter.numberStyle = .decimal
         
         casesView.layer.cornerRadius = 18
@@ -93,7 +93,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
     //MARK:- Data Methods
     
     func downloadData(countryCode: String?) {
-        NetworkingServices.downloadData(forCountryCode: countryCode) { [weak self] result in
+        NetworkingServices.shared.downloadData(forCountryCode: countryCode) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
@@ -126,23 +126,23 @@ class OverviewViewController: UIViewController, CountryDelegate {
     }
     
     
-    func retrieveDateOfLastUpdate() {
-        NetworkingServices.retrieveDateOfLastUpdate { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let dateString):
-                let date = self.inputFormatter.date(from: dateString) ?? Date()
-                DispatchQueue.main.async {
-                    self.lastUpdatedLabel.text = self.outputFormatter.string(from: date)
-                }
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    self.lastUpdatedLabel.text = error.rawValue
-                }
-            }
-        }
-    }
+//    func retrieveDateOfLastUpdate() {
+//        NetworkingServices.retrieveDateOfLastUpdate { [weak self] result in
+//            guard let self = self else { return }
+//
+//            switch result {
+//            case .success(let dateString):
+//                let date = self.inputFormatter.date(from: dateString) ?? Date()
+//                DispatchQueue.main.async {
+//                    self.lastUpdatedLabel.text = self.outputFormatter.string(from: date)
+//                }
+//            case .failure(let error):
+//                DispatchQueue.main.async {
+//                    self.lastUpdatedLabel.text = error.rawValue
+//                }
+//            }
+//        }
+//    }
     
     
     func populateCountriesArray() {
@@ -187,7 +187,7 @@ class OverviewViewController: UIViewController, CountryDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             self.finishedDownloading = true
             self.refreshButton.layer.removeAllAnimations()
-            self.retrieveDateOfLastUpdate()
+            self.lastUpdatedLabel.text = self.outputFormatter.string(from: statistic.lastUpdated)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
                 self.confirmedCasesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.confirmed))

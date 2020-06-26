@@ -148,7 +148,7 @@ class MapViewController: UIViewController {
         cardViewController.activeChangeLabel.text = ""
         cardViewController.changeTextLabel.text = " "
         
-        NetworkingServices.downloadData(forCountryCode: nil) { [weak self] result in
+        NetworkingServices.shared.downloadData(forCountryCode: nil) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
@@ -169,7 +169,7 @@ class MapViewController: UIViewController {
         
         let changeInConfirmed = statistic.changeInConfirmed ?? 0
         let changeInDeaths = statistic.changeInDeaths ?? 0
-        cardViewController.countryLabel.text = statistic.province
+        cardViewController.countryLabel.text = statistic.country
         cardViewController.casesLabel.text = numberFormatter.string(from: NSNumber(value: statistic.confirmed))
         cardViewController.deathsLabel.text = numberFormatter.string(from: NSNumber(value: statistic.deaths))
         cardViewController.recoveriesLabel.text = numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
@@ -184,13 +184,13 @@ class MapViewController: UIViewController {
         var datesAsStrings = [String]()
         var x = 0.0
         
-        for entry in timeline! {
-            if entry.value > 0 {
-                chartDataSet.append(BarChartDataEntry(x: x, y: Double(entry.value)))
-                datesAsStrings.append(dateFormatter.string(from: entry.key))
-                x += 1
-            }
-        }
+//        for entry in timeline! {
+//            if entry.value > 0 {
+//                chartDataSet.append(BarChartDataEntry(x: x, y: Double(entry.value)))
+//                datesAsStrings.append(dateFormatter.string(from: entry.key))
+//                x += 1
+//            }
+//        }
         
         cardViewController.barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: datesAsStrings)
         
@@ -389,13 +389,13 @@ class MapViewController: UIViewController {
         
         show(activityIndicator: activityIndicator, in: view)
         
-        NetworkingServices.downloadAllLocationData { [weak self] result in
+        NetworkingServices.shared.downloadAllLocationData { [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let statistics):
+                self.allStatistics = statistics
                 self.updateMapAnnotations(with: statistics, forCategory: category)
-                
             case .failure(let error):
                 self.showErrorAlert(title: "Error retrieving data", message: error.rawValue)
             }
@@ -404,8 +404,8 @@ class MapViewController: UIViewController {
                 self.activityIndicator.stopAnimating()
                 self.activityIndicator.removeFromSuperview()
             }
-            
         }
+        
     }
     
     
@@ -444,8 +444,6 @@ class MapViewController: UIViewController {
     
     
     func updateMapAnnotations(with statistics: [CoronaStatistic], forCategory category: StatisticCategory) {
-        self.allStatistics = statistics
-        
         var annontations = [CustomPointAnnotation]()
         
         for statistic in statistics {
@@ -468,7 +466,7 @@ class MapViewController: UIViewController {
                     }
                 }
                 
-                annotation.subtitle = statistic.province
+                annotation.subtitle = statistic.country
                 annotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
                 annontations.append(annotation)
             }
@@ -530,7 +528,7 @@ extension MapViewController: MKMapViewDelegate {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideCardView), object: nil)
         
         for statistic in allStatistics! {
-            if statistic.province == view.annotation?.subtitle {
+            if statistic.country == view.annotation?.subtitle {
                 
                 updateCardView(statistic: statistic, timeline: statistic.deathsTimeline, isDisplayingCases: false)
                 updateCardView(statistic: statistic, timeline: statistic.casesTimeline, isDisplayingCases: true)
