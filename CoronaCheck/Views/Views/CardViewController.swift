@@ -20,16 +20,12 @@ class CardViewController: UIViewController {
     @IBOutlet weak var countryLabel: UILabel!
     @IBOutlet weak var casesBackgroundView: UIView!
     @IBOutlet weak var deathsBackgroundView: UIView!
-    @IBOutlet weak var recoveriesBackgroundView: UIView!
     @IBOutlet weak var casesBackgroundLabel: UILabel!
     @IBOutlet weak var deathsBackgroundLabel: UILabel!
-    @IBOutlet weak var recoveriesBackgroundLabel: UILabel!
     @IBOutlet weak var casesLabel: UILabel!
     @IBOutlet weak var deathsLabel: UILabel!
-    @IBOutlet weak var recoveriesLabel: UILabel!
     @IBOutlet weak var casesChangeLabel: UILabel!
     @IBOutlet weak var deathsChangeLabel: UILabel!
-    @IBOutlet weak var activeChangeLabel: UILabel!
     @IBOutlet weak var changeTextLabel: UILabel!
     @IBOutlet weak var barChartView: BarChartView!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
@@ -58,11 +54,9 @@ class CardViewController: UIViewController {
         
         casesBackgroundLabel.layer.masksToBounds = true
         deathsBackgroundLabel.layer.masksToBounds = true
-        recoveriesBackgroundLabel.layer.masksToBounds = true
         
         casesBackgroundLabel.layer.cornerRadius = 18
         deathsBackgroundLabel.layer.cornerRadius = 18
-        recoveriesBackgroundLabel.layer.cornerRadius = 18
         
 //        barChartView.highlightPerTapEnabled = false
         barChartView.highlightPerDragEnabled = false
@@ -92,10 +86,8 @@ class CardViewController: UIViewController {
             
             casesLabel.font = casesLabel.font.withSize(16)
             deathsLabel.font = deathsLabel.font.withSize(16)
-            recoveriesLabel.font = recoveriesLabel.font.withSize(16)
             casesChangeLabel.font = casesChangeLabel.font.withSize(12)
             deathsChangeLabel.font = deathsChangeLabel.font.withSize(12)
-            activeChangeLabel.font = activeChangeLabel.font.withSize(12)
         }
     }
     

@@ -68,7 +68,9 @@ class MapViewController: UIViewController {
     var animationProgressWhenInterrupted: CGFloat = 0
     let activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
     
-    var allStatistics: [CoronaStatistic]?
+    var allData: [CoronaCountryData]?
+    var casesTimeline: Array<(key: Date, value: Int)>?
+    var deathsTimeline: Array<(key: Date, value: Int)>?
     var casesChartData: BarChartData?
     var deathsChartData: BarChartData?
     var casesAxisDates: [String]?
@@ -145,7 +147,6 @@ class MapViewController: UIViewController {
         cardViewController.countryLabel.text = "Worldwide"
         cardViewController.casesChangeLabel.text = ""
         cardViewController.deathsChangeLabel.text = ""
-        cardViewController.activeChangeLabel.text = ""
         cardViewController.changeTextLabel.text = " "
         
         NetworkingServices.shared.downloadData(forCountryCode: nil) { [weak self] result in
@@ -154,9 +155,8 @@ class MapViewController: UIViewController {
             switch result {
             case .success(let statistic):
                 DispatchQueue.main.async {
-                    self.cardViewController.casesLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
+                    self.cardViewController.casesLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.cases))
                     self.cardViewController.deathsLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.deaths))
-                    self.cardViewController.recoveriesLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
                 }
             case .failure(let error):
                 self.showErrorAlert(title: "Error", message: error.rawValue)
@@ -165,17 +165,19 @@ class MapViewController: UIViewController {
         }
     }
     
-    func updateCardView(statistic: CoronaStatistic, timeline: Array<(key: Date, value: Int)>?, isDisplayingCases: Bool) {
-        
-        let changeInConfirmed = statistic.changeInConfirmed ?? 0
-        let changeInDeaths = statistic.changeInDeaths ?? 0
+    func updateCardView(statistic: CoronaCountryData, timeline: Array<(key: Date, value: Int)>?, isDisplayingCases: Bool) {
+        guard let timeline = timeline else { return }
+        if isDisplayingCases {
+            let changeInCases = statistic.cases - timeline.last!.value
+            cardViewController.casesChangeLabel.text = "(+\(numberFormatter.string(from: NSNumber(value: changeInCases))!))*"
+        } else {
+            let changeInDeaths = statistic.deaths - timeline.last!.value
+            cardViewController.deathsChangeLabel.text = "(+\(numberFormatter.string(from: NSNumber(value: changeInDeaths))!))*"
+        }
+
         cardViewController.countryLabel.text = statistic.country
-        cardViewController.casesLabel.text = numberFormatter.string(from: NSNumber(value: statistic.confirmed))
+        cardViewController.casesLabel.text = numberFormatter.string(from: NSNumber(value: statistic.cases))
         cardViewController.deathsLabel.text = numberFormatter.string(from: NSNumber(value: statistic.deaths))
-        cardViewController.recoveriesLabel.text = numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
-        cardViewController.casesChangeLabel.text = "(+\(numberFormatter.string(from: NSNumber(value: changeInConfirmed))!))*"
-        cardViewController.deathsChangeLabel.text = "(+\(numberFormatter.string(from: NSNumber(value: changeInDeaths))!))*"
-        cardViewController.activeChangeLabel.text = "(+\(numberFormatter.string(from: NSNumber(value: (changeInConfirmed - changeInDeaths)))!))*"
         cardViewController.changeTextLabel.text = "* Change from yesterday"
         
         let chartDataSet = BarChartDataSet(entries: [BarChartDataEntry(x: 0, y: 0)])
@@ -184,13 +186,13 @@ class MapViewController: UIViewController {
         var datesAsStrings = [String]()
         var x = 0.0
         
-//        for entry in timeline! {
-//            if entry.value > 0 {
-//                chartDataSet.append(BarChartDataEntry(x: x, y: Double(entry.value)))
-//                datesAsStrings.append(dateFormatter.string(from: entry.key))
-//                x += 1
-//            }
-//        }
+        for entry in timeline {
+            if entry.value > 0 {
+                chartDataSet.append(BarChartDataEntry(x: x, y: Double(entry.value)))
+                datesAsStrings.append(dateFormatter.string(from: entry.key))
+                x += 1
+            }
+        }
         
         cardViewController.barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: datesAsStrings)
         
@@ -216,6 +218,22 @@ class MapViewController: UIViewController {
     }
     
     
+    private func downloadTimelineData(for country: String, completed: @escaping () -> ()) {
+        NetworkingServices.shared.downloadTimelineData(for: country) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let timelineData):
+                self.casesTimeline = timelineData.casesTimeline
+                self.deathsTimeline = timelineData.deathsTimeline
+                completed()
+            case .failure(let error):
+                print(error.rawValue)
+            }
+        }
+    }
+    
+    
     @objc func handleCardPan(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .began:
@@ -227,9 +245,6 @@ class MapViewController: UIViewController {
             }
         case .changed:
             let translation = recognizer.translation(in: cardViewController.view)
-            
-//            recognizer.view!.center = CGPoint(x: recognizer.view!.center.x, y: recognizer.view!.center.y + translation.y)
-//            recognizer.setTranslation(CGPoint(x: 0, y: 0), in: cardViewController.view)
             
             var fractionComplete = translation.y / (cardHeight - 300)
 
@@ -382,7 +397,7 @@ class MapViewController: UIViewController {
     
     private func addAnnotations(forStatistic category: StatisticCategory) {
         
-        if let statistics = allStatistics {
+        if let statistics = allData {
             updateMapAnnotations(with: statistics, forCategory: category)
             return
         }
@@ -393,9 +408,12 @@ class MapViewController: UIViewController {
             guard let self = self else { return }
             
             switch result {
-            case .success(let statistics):
-                self.allStatistics = statistics
-                self.updateMapAnnotations(with: statistics, forCategory: category)
+            case .success(let data):
+                self.allData = data
+                for entry in data {
+                    print(entry.country)
+                }
+                self.updateMapAnnotations(with: data, forCategory: category)
             case .failure(let error):
                 self.showErrorAlert(title: "Error retrieving data", message: error.rawValue)
             }
@@ -443,20 +461,20 @@ class MapViewController: UIViewController {
     }
     
     
-    func updateMapAnnotations(with statistics: [CoronaStatistic], forCategory category: StatisticCategory) {
+    func updateMapAnnotations(with statistics: [CoronaCountryData], forCategory category: StatisticCategory) {
         var annontations = [CustomPointAnnotation]()
         
         for statistic in statistics {
-            if let lat = statistic.latitude, let lon = statistic.longitude {
+            if let lat = statistic.countryInfo?.lat, let lon = statistic.countryInfo?.long {
                 let annotation = CustomPointAnnotation()
                 if category == .cases {
-                    annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
+                    annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.cases))
                 }
                 else if category == .deaths {
                     annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.deaths))
                 }
                 else {
-                    annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
+                    annotation.title = self.numberFormatter.string(from: NSNumber(value: statistic.cases - statistic.deaths))
                 }
                 
                 if let country = statistic.country {
@@ -527,12 +545,15 @@ extension MapViewController: MKMapViewDelegate {
         
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideCardView), object: nil)
         
-        for statistic in allStatistics! {
-            if statistic.country == view.annotation?.subtitle {
-                
-                updateCardView(statistic: statistic, timeline: statistic.deathsTimeline, isDisplayingCases: false)
-                updateCardView(statistic: statistic, timeline: statistic.casesTimeline, isDisplayingCases: true)
-                break
+        for statistic in allData! {
+            if let country = statistic.country, country == view.annotation?.subtitle {
+                downloadTimelineData(for: country) {
+                    DispatchQueue.main.async {
+                        self.updateCardView(statistic: statistic, timeline: self.deathsTimeline, isDisplayingCases: false)
+                        self.updateCardView(statistic: statistic, timeline: self.casesTimeline, isDisplayingCases: true)
+                    }
+                }
+//                break
             }
         }
         startInteractiveTransition(state: .partExpanded, duration: 0.8)

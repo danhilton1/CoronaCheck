@@ -9,33 +9,21 @@
 import Foundation
 
 
-struct CoronaAllData: Codable {
-    let cases: Int
-    let deaths: Int
-    let recovered: Int
-    let updated: Int
-}
-
 struct CoronaCountryData: Codable {
-//    let locations: [Location]
-    let country: String
+    let country: String?
     let updated: Int
     let cases: Int
     let deaths: Int
     let recovered: Int
-    let countryInfo: CountryInfo
+    let countryInfo: CountryInfo?
 }
 
 
-struct CoronaCoutryDataTimeline: Codable {
+struct CoronaCountryDataTimeline: Codable {
     let country: String
-//    let province: String
     let timeline: Timeline
 }
 
-struct CoronaCountryIDData: Codable {
-    let location: LocationWithID
-}
 
 struct CountryInfo: Codable {
     let lat: Double
@@ -43,26 +31,15 @@ struct CountryInfo: Codable {
 }
 
 
-struct Coordinate: Codable {
-    let latitude: String
-    let longitude: String
-}
-
-struct LocationWithID: Codable {
-    let timelines: Timeline
-}
-
 struct Timeline: Codable {
     let cases: [String: Int]
     let deaths: [String: Int]
 }
 
 
-//
-//struct Recovered: Codable {
-//    let last_updated: String
-//    let latest: Int
-//    let locations: [Location]
-//}
-
+struct TimelineData {
+    var country: String
+    var casesTimeline: Array<(key: Date, value: Int)>
+    var deathsTimeline: Array<(key: Date, value: Int)>
+}
 

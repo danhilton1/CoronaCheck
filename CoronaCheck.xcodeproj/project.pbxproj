@@ -25,7 +25,6 @@
 		37B030A52420236A00A34E16 /* OverviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B030A42420236A00A34E16 /* OverviewViewController.swift */; };
 		37B030A8242024DB00A34E16 /* NetworkingServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B030A7242024DB00A34E16 /* NetworkingServices.swift */; };
 		37B030AA24202A6400A34E16 /* CodableStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B030A924202A6400A34E16 /* CodableStructs.swift */; };
-		37B030AC24202C1A00A34E16 /* CoronaStatistic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B030AB24202C1A00A34E16 /* CoronaStatistic.swift */; };
 		37B030EA2420305100A34E16 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B030E92420305100A34E16 /* SceneDelegate.swift */; };
 		37D4A03B2444808D0080500E /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D4A03A2444808D0080500E /* UIHelper.swift */; };
 		37D4A03D244496CE0080500E /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D4A03C244496CE0080500E /* UIViewController+Ext.swift */; };
@@ -81,7 +80,6 @@
 		37B030A42420236A00A34E16 /* OverviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewViewController.swift; sourceTree = "<group>"; };
 		37B030A7242024DB00A34E16 /* NetworkingServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingServices.swift; sourceTree = "<group>"; };
 		37B030A924202A6400A34E16 /* CodableStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableStructs.swift; sourceTree = "<group>"; };
-		37B030AB24202C1A00A34E16 /* CoronaStatistic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoronaStatistic.swift; sourceTree = "<group>"; };
 		37B030E92420305100A34E16 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		37D4A03A2444808D0080500E /* UIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHelper.swift; sourceTree = "<group>"; };
 		37D4A03C244496CE0080500E /* UIViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Ext.swift"; sourceTree = "<group>"; };
@@ -229,7 +227,6 @@
 			isa = PBXGroup;
 			children = (
 				37B030A924202A6400A34E16 /* CodableStructs.swift */,
-				37B030AB24202C1A00A34E16 /* CoronaStatistic.swift */,
 				37AB894924240E7D007970EC /* Country.swift */,
 			);
 			path = Model;
@@ -545,7 +542,6 @@
 			files = (
 				37F634CA2427A2F400A96E7B /* MapViewController.swift in Sources */,
 				37D76DA8244600C9008CC44B /* ErrorMessage.swift in Sources */,
-				37B030AC24202C1A00A34E16 /* CoronaStatistic.swift in Sources */,
 				377A7F5E2422922900E0EC36 /* CountriesController.swift in Sources */,
 				371D55C2242CAED500156270 /* UIViewExtension.swift in Sources */,
 				37B030722420129F00A34E16 /* AppDelegate.swift in Sources */,

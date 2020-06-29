@@ -183,16 +183,16 @@ class OverviewViewController: UIViewController, CountryDelegate {
     
     //MARK:- UI Methods
     
-    func updateUI(with statistic: CoronaStatistic) {
+    func updateUI(with statistic: CoronaCountryData) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             self.finishedDownloading = true
             self.refreshButton.layer.removeAllAnimations()
-            self.lastUpdatedLabel.text = self.outputFormatter.string(from: statistic.lastUpdated)
+            self.lastUpdatedLabel.text = self.outputFormatter.string(from: Date(timeIntervalSince1970: TimeInterval(statistic.updated / 1000)))
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
-                self.confirmedCasesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.confirmed))
+                self.confirmedCasesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.cases))
                 self.confirmedDeathsNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.deaths))
-                self.confirmedRecoveriesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.activeOrRecovered))
+                self.confirmedRecoveriesNumberLabel.text = self.numberFormatter.string(from: NSNumber(value: statistic.cases - statistic.deaths))
             }
         }
     }
